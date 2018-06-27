@@ -21,7 +21,11 @@ local DEFAULT_SETTINGS = {
 	[Settings.PREFAB_TAG_PATTERN] = "^prefab",
 
 	-- This is the name given to ObjectValues created by the plugin.
-	[Settings.PREFAB_VISIBILITY_OBJECT_VALUE_NAME] = "ArePrefabsShown",
+  [Settings.PREFAB_VISIBILITY_OBJECT_VALUE_NAME] = "ArePrefabsShown",
+
+  -- Forces CanCollide to be false for both the PrimaryPart of the prefab and the
+  -- placeholder itself (when showing the prefab).
+  [Settings.PREVENT_COLLISIONS] = true
 }
 
 return function(plugin)

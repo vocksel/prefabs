@@ -12,6 +12,7 @@ local MAKE_PRIMARY_PART_INVISIBLE = Constants.Settings.MAKE_PRIMARY_PART_INVISIB
 local PREFAB_TAG_PATTERN = Constants.Settings.PREFAB_TAG_PATTERN
 local SHIFT_DOWN_FROM_PLACEHOLDER = Constants.Settings.SHIFT_DOWN_FROM_PLACEHOLDER
 local PREFAB_VISIBILITY_OBJECT_VALUE_NAME = Constants.Settings.PREFAB_VISIBILITY_OBJECT_VALUE_NAME
+local PREVENT_COLLISIONS = Constants.Settings.PREVENT_COLLISIONS
 
 -- The location where all the prefabs are stored. Any models are considered to
 -- be prefabs, and any folder will be looked through.
@@ -117,11 +118,20 @@ local function showPrefab(prefab, tag)
       clone.PrimaryPart.Transparency = 1
     end
 
+    if globalSettings:Get(PREVENT_COLLISIONS) then
+      placeholder.CanCollide = false
+      clone.PrimaryPart.CanCollide = false
+    end
+
     clone:SetPrimaryPartCFrame(placeholder.CFrame * positionOffset)
 
     -- The prefab is parented inside of the placeholder so that when moving
     -- things around with prefabs enabled to align them, the placeholder
     -- will follow along.
+    --
+    -- TODO Revise this. It's pretty hacky and there's issues where sometimes
+    -- you can grab the model but it won't also grab the part. This kind of
+    -- fails to achieve its purpose.
     clone.Parent = placeholder
 
     placeholder.Transparency = 1
@@ -137,6 +147,12 @@ local function hidePrefab(_, tag)
         prefabOrPlaceholder:Destroy()
       else -- placeholder
         prefabOrPlaceholder.Transparency = 0
+
+        -- This isn't smart enough to return CanCollide back to the value it was
+        -- before showing prefabs, but that shouldn't be an issue.
+        if globalSettings:Get(PREVENT_COLLISIONS) then
+          prefabOrPlaceholder.CanCollide = true
+        end
       end
     end
   end
