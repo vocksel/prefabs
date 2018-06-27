@@ -1,20 +1,23 @@
 local CollectionService = game:GetService("CollectionService")
 local PluginService = plugin
 
-local resources = script.Parent:FindFirstChild("resources")
+local resources = script:FindFirstChild("resources")
 
 local Constants = require(resources:FindFirstChild("Constants"))
+local PluginSettings = require(resources:FindFirstChild("PluginSettings"))(PluginService)
+
+local globalSettings = PluginSettings.new("global")
 
 local MAKE_PRIMARY_PART_INVISIBLE = Constants.Settings.MAKE_PRIMARY_PART_INVISIBLE
 local PREFAB_TAG_PATTERN = Constants.Settings.PREFAB_TAG_PATTERN
 local SHIFT_DOWN_FROM_PLACEHOLDER = Constants.Settings.SHIFT_DOWN_FROM_PLACEHOLDER
-local PREFAB_VISIBILITY_OBJECT_VALUE = Constants.Settings.PREFAB_VISIBILITY_OBJECT_VALUE
+local PREFAB_VISIBILITY_OBJECT_VALUE_NAME = Constants.Settings.PREFAB_VISIBILITY_OBJECT_VALUE_NAME
 
 -- The location where all the prefabs are stored. Any models are considered to
 -- be prefabs, and any folder will be looked through.
 local PREFABS = CollectionService:GetTagged("prefabs")[1]
 
-local toolbar = PluginService:CreateToolbar(Constants.Names.TOOLBAR_NAME)
+local toolbar = PluginService:CreateToolbar(Constants.Names.TOOLBAR)
 local button = toolbar:CreateButton(
   Constants.Names.TOGGLE_BUTTON_TITLE,
   Constants.Names.TOGGLE_BUTTON_TOOLTIP,
@@ -22,13 +25,14 @@ local button = toolbar:CreateButton(
 )
 
 local function getOrCreatePrefabVisibilityState(parent)
-  local shown = parent:FindFirstChild(name)
+  local objectValueName = globalSettings:Get(PREFAB_VISIBILITY_OBJECT_VALUE_NAME)
+  local shown = parent:FindFirstChild(objectValueName)
 
   if shown and shown:IsA("BoolValue") then
     return shown
   else
     shown = Instance.new("BoolValue")
-    shown.Name = PREFAB_VISIBILITY_OBJECT_VALUE
+    shown.Name = objectValueName
     shown.Value = false
     shown.Parent = parent
 
@@ -66,8 +70,9 @@ end
 -- Each prefab can only have one of these tags. Having more than one "prefab"
 -- tag will only result in the first being picked up.
 local function getPrefabTag(prefab)
+  local prefabTagPattern = globalSettings:Get(PREFAB_TAG_PATTERN)
   for _, tag in pairs(CollectionService:GetTags(prefab)) do
-    if tag:match(PREFAB_TAG_PATTERN) then
+    if tag:match(prefabTagPattern) then
       return tag
     end
   end
@@ -98,7 +103,8 @@ local function getPlaceholdersForTag(tag)
 end
 
 local function showPrefab(prefab, tag)
-  local positionOffset = CFrame.new(0, -SHIFT_DOWN_FROM_PLACEHOLDER, 0)
+  local shiftDownFromPlaceholder = globalSettings:Get(SHIFT_DOWN_FROM_PLACEHOLDER)
+  local positionOffset = CFrame.new(0, -shiftDownFromPlaceholder, 0)
   local placeholders = getPlaceholdersForTag(tag)
 
   for _, placeholder in pairs(placeholders) do
@@ -107,7 +113,7 @@ local function showPrefab(prefab, tag)
 
       local clone = prefab:Clone()
 
-    if MAKE_PRIMARY_PART_INVISIBLE then
+    if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
       clone.PrimaryPart.Transparency = 1
     end
 
