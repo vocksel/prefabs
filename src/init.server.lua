@@ -1,38 +1,34 @@
 local CollectionService = game:GetService("CollectionService")
+local PluginService = plugin
 
--- Controls how far down (in studs) the prefab will be moved when cloning it in.
---
--- This is so the PrimaryPart can be below the prefab, while having the
--- placeholder in the workspace be above ground, so that it can be viewed.
---
--- This makes it easier to work with the prefab, as the PrimaryPart doesn't
--- have to be lodged into the model in any way.
-local SHIFT_DOWN_FROM_PLACEHOLDER = 1
+local resources = script.Parent:FindFirstChild("resources")
 
--- Turns the PrimaryParts of every prefab invisible when cloning it in.
---
--- This allows you to be aware of where you're positioner is while working,
--- while not having to worry about changing its visibility when it's cloned in.
-local MAKE_PRIMARY_PART_INVISIBLE = true
+local Constants = require(resources:FindFirstChild("Constants"))
+
+local MAKE_PRIMARY_PART_INVISIBLE = Constants.Settings.MAKE_PRIMARY_PART_INVISIBLE
+local PREFAB_TAG_PATTERN = Constants.Settings.PREFAB_TAG_PATTERN
+local SHIFT_DOWN_FROM_PLACEHOLDER = Constants.Settings.SHIFT_DOWN_FROM_PLACEHOLDER
+local PREFAB_VISIBILITY_OBJECT_VALUE = Constants.Settings.PREFAB_VISIBILITY_OBJECT_VALUE
 
 -- The location where all the prefabs are stored. Any models are considered to
 -- be prefabs, and any folder will be looked through.
 local PREFABS = CollectionService:GetTagged("prefabs")[1]
 
-local toolbar = plugin:CreateToolbar("Race City")
-local button = toolbar:CreateButton("Toggle Prefabs",
-  "Toggles all of the prefabs between parts and real models",
-  "rbxassetid://413367266")
+local toolbar = PluginService:CreateToolbar(Constants.Names.TOOLBAR_NAME)
+local button = toolbar:CreateButton(
+  Constants.Names.TOGGLE_BUTTON_TITLE,
+  Constants.Names.TOGGLE_BUTTON_TOOLTIP,
+  Constants.Images.TOOGLE_BUTTON_ICON
+)
 
 local function getOrCreatePrefabVisibilityState(parent)
-  local name = "ArePrefabsShown"
   local shown = parent:FindFirstChild(name)
 
   if shown and shown:IsA("BoolValue") then
     return shown
   else
     shown = Instance.new("BoolValue")
-    shown.Name = name
+    shown.Name = PREFAB_VISIBILITY_OBJECT_VALUE
     shown.Value = false
     shown.Parent = parent
 
@@ -71,7 +67,7 @@ end
 -- tag will only result in the first being picked up.
 local function getPrefabTag(prefab)
   for _, tag in pairs(CollectionService:GetTags(prefab)) do
-    if tag:match("^prefab") then
+    if tag:match(PREFAB_TAG_PATTERN) then
       return tag
     end
   end
