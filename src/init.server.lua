@@ -1,4 +1,4 @@
-local collections = game:GetService("CollectionService")
+local CollectionService = game:GetService("CollectionService")
 
 -- Controls how far down (in studs) the prefab will be moved when cloning it in.
 --
@@ -17,7 +17,7 @@ local MAKE_PRIMARY_PART_INVISIBLE = true
 
 -- The location where all the prefabs are stored. Any models are considered to
 -- be prefabs, and any folder will be looked through.
-local PREFABS = collections:GetTagged("prefabs")[1]
+local PREFABS = CollectionService:GetTagged("prefabs")[1]
 
 local toolbar = plugin:CreateToolbar("Race City")
 local button = toolbar:CreateButton("Toggle Prefabs",
@@ -70,7 +70,7 @@ end
 -- Each prefab can only have one of these tags. Having more than one "prefab"
 -- tag will only result in the first being picked up.
 local function getPrefabTag(prefab)
-  for _, tag in pairs(collections:GetTags(prefab)) do
+  for _, tag in pairs(CollectionService:GetTags(prefab)) do
     if tag:match("^prefab") then
       return tag
     end
@@ -93,7 +93,7 @@ end
 
 local function getPlaceholdersForTag(tag)
   local found = {}
-  for _, placeholder in pairs(collections:GetTagged(tag)) do
+  for _, placeholder in pairs(CollectionService:GetTagged(tag)) do
     if not placeholder:IsDescendantOf(PREFABS) then
       table.insert(found, placeholder)
     end
@@ -129,7 +129,7 @@ end
 local showAllPrefabs = createPrefabModifier(showPrefab)
 
 local function hidePrefab(_, tag)
-  for _, prefabOrPlaceholder in pairs(collections:GetTagged(tag)) do
+  for _, prefabOrPlaceholder in pairs(CollectionService:GetTagged(tag)) do
     if not prefabOrPlaceholder:IsDescendantOf(PREFABS) then
       if prefabOrPlaceholder:IsA("Model") then -- prefab
         prefabOrPlaceholder:Destroy()
