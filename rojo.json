@@ -1,0 +1,10 @@
+{
+  "name": "prefabs",
+  "servePort": 8000,
+  "partitions": {
+    "src": {
+      "path": "src",
+      "target": "ServerStorage.Plugins.Prefabs"
+    }
+  }
+}
