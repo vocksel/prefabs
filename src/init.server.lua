@@ -1,7 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 local PluginService = plugin
 
-local resources = script.Parent:FindFirstChild("resources")
+local resources = script:FindFirstChild("resources")
 
 local Constants = require(resources:FindFirstChild("Constants"))
 
@@ -14,7 +14,7 @@ local PREFAB_VISIBILITY_OBJECT_VALUE = Constants.Settings.PREFAB_VISIBILITY_OBJE
 -- be prefabs, and any folder will be looked through.
 local PREFABS = CollectionService:GetTagged("prefabs")[1]
 
-local toolbar = PluginService:CreateToolbar(Constants.Names.TOOLBAR_NAME)
+local toolbar = PluginService:CreateToolbar(Constants.Names.TOOLBAR)
 local button = toolbar:CreateButton(
   Constants.Names.TOGGLE_BUTTON_TITLE,
   Constants.Names.TOGGLE_BUTTON_TOOLTIP,
