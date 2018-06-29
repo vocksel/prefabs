@@ -16,4 +16,10 @@ return {
 		PREFAB_VISIBILITY_OBJECT_VALUE_NAME = "PREFAB_VISIBILITY_OBJECT_VALUE_NAME",
     PREVENT_COLLISIONS = "FORCE_NO_COLLISIONS",
 	},
+
+  Containers = {
+    ROOT = "Prefabs",
+    PREFABS = "Models",
+    PLACEHOLDERS = "Placeholders"
+  }
 }

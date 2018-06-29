@@ -1,5 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 local PluginService = plugin
+local ServerStorage = game:GetService("ServerStorage")
 
 local resources = script:FindFirstChild("resources")
 
@@ -14,10 +15,6 @@ local SHIFT_DOWN_FROM_PLACEHOLDER = Constants.Settings.SHIFT_DOWN_FROM_PLACEHOLD
 local PREFAB_VISIBILITY_OBJECT_VALUE_NAME = Constants.Settings.PREFAB_VISIBILITY_OBJECT_VALUE_NAME
 local PREVENT_COLLISIONS = Constants.Settings.PREVENT_COLLISIONS
 
--- The location where all the prefabs are stored. Any models are considered to
--- be prefabs, and any folder will be looked through.
-local PREFABS = CollectionService:GetTagged("prefabs")[1]
-
 local toolbar = PluginService:CreateToolbar(Constants.Names.TOOLBAR)
 local button = toolbar:CreateButton(
   Constants.Names.TOGGLE_BUTTON_TITLE,
@@ -25,9 +22,40 @@ local button = toolbar:CreateButton(
   Constants.Images.TOOGLE_BUTTON_ICON
 )
 
-local function getOrCreatePrefabVisibilityState(parent)
+-- Gets a folder, or creates it if it doesn't exist.
+--
+-- The word "grab" in this project means the same thing as "get or create." It's
+-- just a way to cut down on the length of some functions.
+local function grabFolder(name, parent)
+  assert(name, "need to give a name to the folder")
+  assert(parent, "need a parent for the folder")
+
+  if parent:FindFirstChild(name) then
+    return parent[name]
+  else
+    local folder = Instance.new("Folder")
+    folder.Name = name
+    folder.Parent = parent
+    return folder
+  end
+end
+
+local function grabRootStorage()
+  return grabFolder(Constants.Containers.ROOT, ServerStorage)
+end
+
+local function grabPlaceholderStorage()
+  return grabFolder(Constants.Containers.PLACEHOLDERS, grabRootStorage())
+end
+
+local function grabPrefabStorage()
+  return grabFolder(Constants.Containers.PREFABS, grabRootStorage())
+end
+
+local function getOrCreatePrefabVisibilityState()
+  local storage = grabRootStorage()
   local objectValueName = globalSettings:Get(PREFAB_VISIBILITY_OBJECT_VALUE_NAME)
-  local shown = parent:FindFirstChild(objectValueName)
+  local shown = storage:FindFirstChild(objectValueName)
 
   if shown and shown:IsA("BoolValue") then
     return shown
@@ -35,10 +63,16 @@ local function getOrCreatePrefabVisibilityState(parent)
     shown = Instance.new("BoolValue")
     shown.Name = objectValueName
     shown.Value = false
-    shown.Parent = parent
+    shown.Parent = storage
 
     return shown
   end
+end
+
+local function setupContainers()
+  grabRootStorage()
+  grabPlaceholderStorage()
+  grabPrefabStorage()
 end
 
 local function validatePrefab(prefab)
@@ -84,7 +118,10 @@ end
 -- The callback is passed the prefab itself, and the tag associated with the
 -- prefab.
 local function createPrefabModifier(callback)
-  return function(prefabs)
+  return function()
+    local storage = grabPrefabStorage()
+    local prefabs = getPrefabs(storage)
+
     for _, prefab in pairs(prefabs) do
       local tag = getPrefabTag(prefab)
       assert(tag, ("%s is missing a prefab tag"):format(prefab:GetFullName()))
@@ -96,7 +133,7 @@ end
 local function getPlaceholdersForTag(tag)
   local found = {}
   for _, placeholder in pairs(CollectionService:GetTagged(tag)) do
-    if not placeholder:IsDescendantOf(PREFABS) then
+    if placeholder:IsDescendantOf(workspace) then
       table.insert(found, placeholder)
     end
   end
@@ -112,27 +149,14 @@ local function showPrefab(prefab, tag)
     assert(placeholder:IsA("BasePart"), ("%s must be a BasePart to act as "..
       " a placeholder"):format(placeholder:GetFullName()))
 
-      local clone = prefab:Clone()
+    local clone = prefab:Clone()
 
     if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
       clone.PrimaryPart.Transparency = 1
     end
 
-    if globalSettings:Get(PREVENT_COLLISIONS) then
-      placeholder.CanCollide = false
-      clone.PrimaryPart.CanCollide = false
-    end
-
     clone:SetPrimaryPartCFrame(placeholder.CFrame * positionOffset)
-
-    -- The prefab is parented inside of the placeholder so that when moving
-    -- things around with prefabs enabled to align them, the placeholder
-    -- will follow along.
-    --
-    -- TODO Revise this. It's pretty hacky and there's issues where sometimes
-    -- you can grab the model but it won't also grab the part. This kind of
-    -- fails to achieve its purpose.
-    clone.Parent = placeholder
+    clone.Parent = placeholder.Parent
 
     placeholder.Transparency = 1
   end
@@ -142,7 +166,7 @@ local showAllPrefabs = createPrefabModifier(showPrefab)
 
 local function hidePrefab(_, tag)
   for _, prefabOrPlaceholder in pairs(CollectionService:GetTagged(tag)) do
-    if not prefabOrPlaceholder:IsDescendantOf(PREFABS) then
+    if not prefabOrPlaceholder:IsDescendantOf(grabPrefabStorage()) then
       if prefabOrPlaceholder:IsA("Model") then -- prefab
         prefabOrPlaceholder:Destroy()
       else -- placeholder
@@ -161,19 +185,14 @@ end
 local hideAllPrefabs = createPrefabModifier(hidePrefab)
 
 local function togglePrefabs()
-  assert(PREFABS, "No folder containing prefabs found. Tag a folder with "..
-    "\"prefabs\" and try again")
-
-  local arePrefabsShown = getOrCreatePrefabVisibilityState(PREFABS)
-  local prefabs = getPrefabs(PREFABS)
-
+  local arePrefabsShown = getOrCreatePrefabVisibilityState()
   if arePrefabsShown.Value then
-    hideAllPrefabs(prefabs)
+    hideAllPrefabs()
   else
-    showAllPrefabs(prefabs)
+    showAllPrefabs()
   end
-
   arePrefabsShown.Value = not arePrefabsShown.Value
 end
 
+setupContainers()
 button.Click:Connect(togglePrefabs)
