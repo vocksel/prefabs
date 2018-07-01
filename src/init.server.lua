@@ -195,6 +195,10 @@ local function showPrefab(prefab, tag)
       clone.PrimaryPart.Transparency = 1
     end
 
+    if globalSettings:Get(PREVENT_COLLISIONS) then
+      clone.PrimaryPart.CanCollide = false
+    end
+
     clone:SetPrimaryPartCFrame(placeholder.CFrame * positionOffset)
     clone.Parent = placeholder.Parent
 
