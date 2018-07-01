@@ -133,11 +133,51 @@ end
 local function getPlaceholdersForTag(tag)
   local found = {}
   for _, placeholder in pairs(CollectionService:GetTagged(tag)) do
-    if placeholder:IsDescendantOf(workspace) then
+    if placeholder:IsA("BasePart") then
       table.insert(found, placeholder)
     end
   end
   return found
+end
+
+-- Moves the placeholder's position to its associated prefab.
+--
+-- This allows the user to move the cloned prefabs when viewing, and have the
+-- placeholder at the same position when switching back.
+local function updatePlaceholderPosition(placeholder)
+  local prefab = placeholder.Link.Value
+  placeholder.CFrame = prefab:GetPrimaryPartCFrame()
+end
+
+-- Links a cloned in prefab with a placeholder.
+--
+-- This allows us to move the placeholder back in to the same place later.
+local function linkPrefabToPlaceholder(prefab, placeholder)
+  local linker = Instance.new("ObjectValue")
+  linker.Name = "Link"
+  linker.Value = prefab
+  linker.Parent = placeholder
+  return linker
+end
+
+-- Gets the placeholder associated with a prefab.
+--
+-- This is possible by using linkPrefabToPlaceholder() to associate a prefab
+-- with a specific placeholder, and vice versa.
+--
+-- This can return nil if a placeholder is not associated with the prefab. In
+-- this case, we likely have an unlinked placeholder floating around that needs
+-- to be cleaned up.
+local function getPlaceholderForPrefab(prefab)
+  local storage = grabPlaceholderStorage()
+
+  for _, placeholder in pairs(storage:GetChildren()) do
+    local link = placeholder:FindFirstChild("Link")
+
+    if link and link.Value == prefab then
+      return placeholder
+    end
+  end
 end
 
 local function showPrefab(prefab, tag)
@@ -158,36 +198,48 @@ local function showPrefab(prefab, tag)
     clone:SetPrimaryPartCFrame(placeholder.CFrame * positionOffset)
     clone.Parent = placeholder.Parent
 
-    placeholder.Transparency = 1
+    linkPrefabToPlaceholder(clone, placeholder)
+    placeholder.Parent = grabPlaceholderStorage()
   end
 end
 
 local showAllPrefabs = createPrefabModifier(showPrefab)
 
 local function hidePrefab(_, tag)
-  for _, prefabOrPlaceholder in pairs(CollectionService:GetTagged(tag)) do
-    if not prefabOrPlaceholder:IsDescendantOf(grabPrefabStorage()) then
-      if prefabOrPlaceholder:IsA("Model") then -- prefab
-        prefabOrPlaceholder:Destroy()
-      else -- placeholder
-        prefabOrPlaceholder.Transparency = 0
+  for _, instance in pairs(CollectionService:GetTagged(tag)) do
+    if instance:IsDescendantOf(workspace) and instance:IsA("Model") then
+      local placeholder = getPlaceholderForPrefab(instance)
 
-        -- This isn't smart enough to return CanCollide back to the value it was
-        -- before showing prefabs, but that shouldn't be an issue.
-        if globalSettings:Get(PREVENT_COLLISIONS) then
-          prefabOrPlaceholder.CanCollide = true
-        end
+      if placeholder then
+        -- This moves the placeholder to the prefab's new position (if it
+        -- changed). This must be done before destroying the link because this
+        -- function relies on the link to access the associated prefab.
+        updatePlaceholderPosition(placeholder)
+
+        placeholder.Link:Destroy()
+        placeholder.Parent = instance.Parent
       end
+
+      instance:Destroy()
     end
   end
 end
 
 local hideAllPrefabs = createPrefabModifier(hidePrefab)
 
+local function removeUnlinkedPlaceholders()
+  for _, placeholder in pairs(grabPlaceholderStorage():GetChildren()) do
+    if not placeholder:FindFirstChild("Link") or not placeholder.Link.Value then
+      placeholder:Destroy()
+    end
+  end
+end
+
 local function togglePrefabs()
   local arePrefabsShown = getOrCreatePrefabVisibilityState()
   if arePrefabsShown.Value then
     hideAllPrefabs()
+    removeUnlinkedPlaceholders()
   else
     showAllPrefabs()
   end
