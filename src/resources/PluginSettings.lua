@@ -2,14 +2,17 @@ local Constants = require(script.Parent.Constants)
 local Settings = Constants.Settings
 
 local DEFAULT_SETTINGS = {
-	-- Controls how far down (in studs) the prefab will be moved when cloning it in.
-	--
-	-- This is so the PrimaryPart can be below the prefab, while having the
-	-- placeholder in the workspace be above ground, so that it can be viewed.
-	--
-	-- This makes it easier to work with the prefab, as the PrimaryPart doesn't
-	-- have to be lodged into the model in any way.
-	[Settings.SHIFT_DOWN_FROM_PLACEHOLDER] = 1,
+  -- Controls whether the prefab has its position adjusted so it rests on top of
+  -- the same surface as the placeholder.
+  --
+  -- This fixes an issue where the prefab will be floating in the air. The
+  -- PrimaryPart is always below the prefab so there's no clipping while
+  -- building, and the placeholder is always above ground so it can be easily
+  -- viewed.
+  --
+  -- This setting adjusts the prefab's position that it rests on the same
+  -- surface as the placeholder, instead of floating in the air.
+	[Settings.MOVE_PREFAB_TO_PLACEHOLDER_SURFACE] = true,
 
 	-- Turns the PrimaryParts of every prefab invisible when cloning it in.
 	--

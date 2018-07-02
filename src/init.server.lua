@@ -11,7 +11,7 @@ local globalSettings = PluginSettings.new("global")
 
 local MAKE_PRIMARY_PART_INVISIBLE = Constants.Settings.MAKE_PRIMARY_PART_INVISIBLE
 local PREFAB_TAG_PATTERN = Constants.Settings.PREFAB_TAG_PATTERN
-local SHIFT_DOWN_FROM_PLACEHOLDER = Constants.Settings.SHIFT_DOWN_FROM_PLACEHOLDER
+local MOVE_PREFAB_TO_PLACEHOLDER_SURFACE = Constants.Settings.MOVE_PREFAB_TO_PLACEHOLDER_SURFACE
 local PREFAB_VISIBILITY_OBJECT_VALUE_NAME = Constants.Settings.PREFAB_VISIBILITY_OBJECT_VALUE_NAME
 local PREVENT_COLLISIONS = Constants.Settings.PREVENT_COLLISIONS
 
@@ -180,9 +180,18 @@ local function getPlaceholderForPrefab(prefab)
   end
 end
 
+-- Moves the PrimaryPart of a model up into the model.
+--
+-- This is used so that the placeholder can be above ground, while the prefab's
+-- PrimaryPart is below it. Normally this would lead to a gap between the prefab
+-- and the surface it's supposed to be on, but this function pushes the
+  -- PrimaryPart up into the model so it rests on top as expected.
+local function insetPrimaryPart(model)
+  local primary = model.PrimaryPart
+  primary.CFrame = primary.CFrame * CFrame.new(0, primary.Size.Y, 0)
+end
+
 local function showPrefab(prefab, tag)
-  local shiftDownFromPlaceholder = globalSettings:Get(SHIFT_DOWN_FROM_PLACEHOLDER)
-  local positionOffset = CFrame.new(0, -shiftDownFromPlaceholder, 0)
   local placeholders = getPlaceholdersForTag(tag)
 
   for _, placeholder in pairs(placeholders) do
@@ -190,6 +199,10 @@ local function showPrefab(prefab, tag)
       " a placeholder"):format(placeholder:GetFullName()))
 
     local clone = prefab:Clone()
+
+    if globalSettings:Get(MOVE_PREFAB_TO_PLACEHOLDER_SURFACE) then
+      insetPrimaryPart(clone)
+    end
 
     if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
       clone.PrimaryPart.Transparency = 1
@@ -199,7 +212,7 @@ local function showPrefab(prefab, tag)
       clone.PrimaryPart.CanCollide = false
     end
 
-    clone:SetPrimaryPartCFrame(placeholder.CFrame * positionOffset)
+    clone:SetPrimaryPartCFrame(placeholder.CFrame)
     clone.Parent = placeholder.Parent
 
     linkPrefabToPlaceholder(clone, placeholder)
