@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local HistoryService = game:GetService("ChangeHistoryService")
 local PluginService = plugin
 local ServerStorage = game:GetService("ServerStorage")
 
@@ -254,6 +255,7 @@ end
 
 local function togglePrefabs()
   local arePrefabsShown = getOrCreatePrefabVisibilityState()
+  HistoryService:SetWaypoint("Toggling prefabs")
   if arePrefabsShown.Value then
     hideAllPrefabs()
     removeUnlinkedPlaceholders()
@@ -261,6 +263,7 @@ local function togglePrefabs()
     showAllPrefabs()
   end
   arePrefabsShown.Value = not arePrefabsShown.Value
+  HistoryService:SetWaypoint("Prefabs toggled")
 end
 
 setupContainers()
