@@ -2,7 +2,7 @@ files[".luacheckrc"].global = false
 
 stds.roblox = {
   globals = {
-    "script", "workspace"
+    "script", "workspace", "plugin"
   },
 
   read_globals = {
