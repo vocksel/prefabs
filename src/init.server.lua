@@ -244,19 +244,24 @@ end
 
 local hideAllPrefabs = createPrefabModifier(hidePrefab)
 
-local function removeUnlinkedPlaceholders()
-  for _, placeholder in pairs(grabPlaceholderStorage():GetChildren()) do
-    if not placeholder:FindFirstChild("Link") or not placeholder.Link.Value then
-      placeholder:Destroy()
-    end
-  end
-end
+-- FIXME This has a tendency to delete placeholders when it shouldn't.
+--
+-- It's likely to do with the link, it's been seen being created multiple times
+-- in a placeholder which would lead to at least one having no value, causing
+-- the placeholder to be destroyed.
+-- local function removeUnlinkedPlaceholders()
+--   for _, placeholder in pairs(grabPlaceholderStorage():GetChildren()) do
+--     if not placeholder:FindFirstChild("Link") or not placeholder.Link.Value then
+--       placeholder:Destroy()
+--     end
+--   end
+-- end
 
 local function togglePrefabs()
   local arePrefabsShown = getOrCreatePrefabVisibilityState()
   if arePrefabsShown.Value then
     hideAllPrefabs()
-    removeUnlinkedPlaceholders()
+    -- removeUnlinkedPlaceholders()
   else
     showAllPrefabs()
   end
