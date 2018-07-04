@@ -234,11 +234,11 @@ local function hidePrefab(_, tag)
         -- function relies on the link to access the associated prefab.
         updatePlaceholderPosition(placeholder)
 
-        placeholder.Link:Destroy()
+        placeholder.Link.Parent = nil
         placeholder.Parent = instance.Parent
       end
 
-      instance:Destroy()
+      instance.Parent = nil
     end
   end
 end
@@ -248,23 +248,34 @@ local hideAllPrefabs = createPrefabModifier(hidePrefab)
 local function removeUnlinkedPlaceholders()
   for _, placeholder in pairs(grabPlaceholderStorage():GetChildren()) do
     if not placeholder:FindFirstChild("Link") or not placeholder.Link.Value then
-      placeholder:Destroy()
+      placeholder.Parent = nil
     end
   end
 end
 
 local function togglePrefabs()
   local arePrefabsShown = getOrCreatePrefabVisibilityState()
+
   HistoryService:SetWaypoint("Toggling prefabs")
+
   if arePrefabsShown.Value then
     hideAllPrefabs()
     removeUnlinkedPlaceholders()
   else
     showAllPrefabs()
   end
+
   arePrefabsShown.Value = not arePrefabsShown.Value
   HistoryService:SetWaypoint("Prefabs toggled")
 end
+
+HistoryService.OnRedo:Connect(function(waypoint)
+  print("redoing", waypoint)
+end)
+
+HistoryService.OnUndo:Connect(function(waypoint)
+  print("undoing", waypoint)
+end)
 
 setupContainers()
 button.Click:Connect(togglePrefabs)
