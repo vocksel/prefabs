@@ -6,6 +6,7 @@ local resources = script:FindFirstChild("resources")
 
 local Constants = require(resources:FindFirstChild("Constants"))
 local PluginSettings = require(resources:FindFirstChild("PluginSettings"))(PluginService)
+local scale = require(script.scale)
 
 local globalSettings = PluginSettings.new("global")
 
@@ -210,6 +211,10 @@ local function showPrefab(prefab, tag)
 
     if globalSettings:Get(PREVENT_COLLISIONS) then
       clone.PrimaryPart.CanCollide = false
+    end
+
+    if placeholder:FindFirstChild("Scale") and placeholder.Scale:IsA("NumberValue") then
+      scale(clone, placeholder.Scale.Value)
     end
 
     clone:SetPrimaryPartCFrame(placeholder.CFrame)
