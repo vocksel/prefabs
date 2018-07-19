@@ -8,8 +8,8 @@ local DEFAULT_SETTINGS = {
 	-- while not having to worry about changing its visibility when it's cloned in.
 	[Settings.MAKE_PRIMARY_PART_INVISIBLE] = true,
 
-	-- This tag is used to associate the prefab with placeholders in the workspace.
-	[Settings.PREFAB_TAG_PATTERN] = "^prefab",
+  -- This gets prepended to every prefab tag so there's no chance of naming collisions.
+  [Settings.TAG_PREFIX] = "prefab",
 
   -- Forces CanCollide to be false for both the PrimaryPart of the prefab and the
   -- placeholder itself (when showing the prefab).

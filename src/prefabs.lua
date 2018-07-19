@@ -11,7 +11,7 @@ return function(plugin)
   local globalSettings = PluginSettings.new("global")
 
   local MAKE_PRIMARY_PART_INVISIBLE = Constants.Settings.MAKE_PRIMARY_PART_INVISIBLE
-  local PREFAB_TAG_PATTERN = Constants.Settings.PREFAB_TAG_PATTERN
+  local TAG_PREFIX = Constants.Settings.TAG_PREFIX
   local PREVENT_COLLISIONS = Constants.Settings.PREVENT_COLLISIONS
 
   local exports = {}
@@ -64,7 +64,7 @@ return function(plugin)
   -- Each prefab can only have one of these tags. Having more than one "prefab"
   -- tag will only result in the first being picked up.
   local function getPrefabTag(prefab)
-    local prefabTagPattern = globalSettings:Get(PREFAB_TAG_PATTERN)
+    local prefabTagPattern = "^" .. globalSettings:Get(TAG_PREFIX)
     for _, tag in pairs(CollectionService:GetTags(prefab)) do
       if tag:match(prefabTagPattern) then
         return tag
