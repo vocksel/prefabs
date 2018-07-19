@@ -103,6 +103,13 @@ return function(plugin)
     return found
   end
 
+  local function moveToCamera(model)
+    local camera = workspace.CurrentCamera
+
+    -- Not messing with orientation at all, just using the camera's position
+    model:SetPrimaryPartCFrame(CFrame.new(camera.CFrame.p))
+  end
+
   local function applySettings(prefab)
     if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
       prefab.PrimaryPart.Transparency = 1
@@ -118,12 +125,16 @@ return function(plugin)
     -- end
   end
 
+  local function getTagForName(name)
+    return globalSettings:Get(TAG_PREFIX) .. ":" .. name
+  end
+
   function exports.register(model, name)
     validatePrefab(model)
 
     assert(model:IsA("Model"), "Failed to register %s as a prefab. Must be a Model")
 
-    CollectionService:AddTag(model, Constants.TAG_PREFIX .. ":" .. name)
+    CollectionService:AddTag(model, getTagForName(name))
 
     local clone = model:Clone()
     clone.Name = name
@@ -135,6 +146,29 @@ return function(plugin)
   function exports.registerSelection(name)
     local selection = SelectionService:Get()[1]
     exports.register(selection, name)
+  end
+
+  function exports.insert(name)
+    local tag = getTagForName(name)
+
+    return createPrefabModifier(function(prefab)
+      if CollectionService:HasTag(prefab, tag) then
+        local clone = prefab:Clone()
+        local selection = SelectionService:Get()[1]
+
+        -- TODO Either move the clone in front of the camera, or fire a ray
+        -- from the center of the camera  and position the model at the position hit.
+        moveToCamera(clone)
+
+        if selection then
+          clone.Parent = selection.Parent
+        else
+          clone.Parent = workspace
+        end
+
+        SelectionService:Set({ clone })
+      end
+    end)()
   end
 
   exports.refresh = createPrefabModifier(function(prefab, prefabTag)
