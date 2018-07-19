@@ -1,5 +1,6 @@
 return function(plugin)
   local CollectionService = game:GetService("CollectionService")
+  local SelectionService = game:GetService("Selection")
   local ServerStorage = game:GetService("ServerStorage")
 
   local resources = script.Parent:FindFirstChild("resources")
@@ -129,6 +130,11 @@ return function(plugin)
     clone.Parent = getOrCreateStorage()
 
     applySettings(model)
+  end
+
+  function exports.registerSelection(name)
+    local selection = SelectionService:Get()[1]
+    exports.register(selection, name)
   end
 
   exports.refresh = createPrefabModifier(function(prefab, prefabTag)
