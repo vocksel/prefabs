@@ -103,11 +103,15 @@ return function(plugin)
     return found
   end
 
-  local function moveToCamera(model)
+  -- Moves a model in front of the camera for easy placement
+  local function moveInFrontOfCamera(model)
     local camera = workspace.CurrentCamera
+    local view = camera.ViewportSize
+    local size = model:GetExtentsSize()
+    local averageLength = (size.X+size.Y+size.Z)/2
+    local ray = camera:ViewportPointToRay(view.X/2, view.Y/2, averageLength)
 
-    -- Not messing with orientation at all, just using the camera's position
-    model:SetPrimaryPartCFrame(CFrame.new(camera.CFrame.p))
+    model:SetPrimaryPartCFrame(CFrame.new(ray.Origin))
   end
 
   local function applySettings(prefab)
@@ -156,10 +160,7 @@ return function(plugin)
         local clone = prefab:Clone()
         local selection = SelectionService:Get()[1]
 
-        -- TODO Either move the clone in front of the camera, or fire a ray
-        -- from the center of the camera  and position the model at the position hit.
-        moveToCamera(clone)
-
+        moveInFrontOfCamera(clone)
         applySettings(clone)
 
         if selection then
