@@ -160,6 +160,8 @@ return function(plugin)
         -- from the center of the camera  and position the model at the position hit.
         moveToCamera(clone)
 
+        applySettings(clone)
+
         if selection then
           clone.Parent = selection.Parent
         else
