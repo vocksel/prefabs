@@ -2,18 +2,6 @@ local Constants = require(script.Parent.Constants)
 local Settings = Constants.Settings
 
 local DEFAULT_SETTINGS = {
-  -- Controls whether the prefab has its position adjusted so it rests on top of
-  -- the same surface as the placeholder.
-  --
-  -- This fixes an issue where the prefab will be floating in the air. The
-  -- PrimaryPart is always below the prefab so there's no clipping while
-  -- building, and the placeholder is always above ground so it can be easily
-  -- viewed.
-  --
-  -- This setting adjusts the prefab's position that it rests on the same
-  -- surface as the placeholder, instead of floating in the air.
-	[Settings.MOVE_PREFAB_TO_PLACEHOLDER_SURFACE] = true,
-
 	-- Turns the PrimaryParts of every prefab invisible when cloning it in.
 	--
 	-- This allows you to be aware of where you're positioner is while working,
@@ -22,9 +10,6 @@ local DEFAULT_SETTINGS = {
 
 	-- This tag is used to associate the prefab with placeholders in the workspace.
 	[Settings.PREFAB_TAG_PATTERN] = "^prefab",
-
-	-- This is the name given to ObjectValues created by the plugin.
-  [Settings.PREFAB_VISIBILITY_OBJECT_VALUE_NAME] = "ArePrefabsShown",
 
   -- Forces CanCollide to be false for both the PrimaryPart of the prefab and the
   -- placeholder itself (when showing the prefab).

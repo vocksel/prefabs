@@ -6,14 +6,12 @@ local resources = script:FindFirstChild("resources")
 
 local Constants = require(resources:FindFirstChild("Constants"))
 local PluginSettings = require(resources:FindFirstChild("PluginSettings"))(PluginService)
-local scale = require(script.scale)
+-- local scale = require(script.scale)
 
 local globalSettings = PluginSettings.new("global")
 
 local MAKE_PRIMARY_PART_INVISIBLE = Constants.Settings.MAKE_PRIMARY_PART_INVISIBLE
 local PREFAB_TAG_PATTERN = Constants.Settings.PREFAB_TAG_PATTERN
-local MOVE_PREFAB_TO_PLACEHOLDER_SURFACE = Constants.Settings.MOVE_PREFAB_TO_PLACEHOLDER_SURFACE
-local PREFAB_VISIBILITY_OBJECT_VALUE_NAME = Constants.Settings.PREFAB_VISIBILITY_OBJECT_VALUE_NAME
 local PREVENT_COLLISIONS = Constants.Settings.PREVENT_COLLISIONS
 
 local toolbar = PluginService:CreateToolbar(Constants.Names.TOOLBAR)
@@ -23,57 +21,8 @@ local button = toolbar:CreateButton(
   Constants.Images.TOOGLE_BUTTON_ICON
 )
 
--- Gets a folder, or creates it if it doesn't exist.
---
--- The word "grab" in this project means the same thing as "get or create." It's
--- just a way to cut down on the length of some functions.
-local function grabFolder(name, parent)
-  assert(name, "need to give a name to the folder")
-  assert(parent, "need a parent for the folder")
-
-  if parent:FindFirstChild(name) then
-    return parent[name]
-  else
-    local folder = Instance.new("Folder")
-    folder.Name = name
-    folder.Parent = parent
-    return folder
-  end
-end
-
-local function grabRootStorage()
-  return grabFolder(Constants.Containers.ROOT, ServerStorage)
-end
-
-local function grabPlaceholderStorage()
-  return grabFolder(Constants.Containers.PLACEHOLDERS, grabRootStorage())
-end
-
-local function grabPrefabStorage()
-  return grabFolder(Constants.Containers.PREFABS, grabRootStorage())
-end
-
-local function getOrCreatePrefabVisibilityState()
-  local storage = grabRootStorage()
-  local objectValueName = globalSettings:Get(PREFAB_VISIBILITY_OBJECT_VALUE_NAME)
-  local shown = storage:FindFirstChild(objectValueName)
-
-  if shown and shown:IsA("BoolValue") then
-    return shown
-  else
-    shown = Instance.new("BoolValue")
-    shown.Name = objectValueName
-    shown.Value = false
-    shown.Parent = storage
-
-    return shown
-  end
-end
-
-local function setupContainers()
-  grabRootStorage()
-  grabPlaceholderStorage()
-  grabPrefabStorage()
+local function getStorage()
+  return ServerStorage:FindFirstChild(Constants.Names.MODEL_CONTAINER)
 end
 
 local function validatePrefab(prefab)
@@ -120,7 +69,11 @@ end
 -- prefab.
 local function createPrefabModifier(callback)
   return function()
-    local storage = grabPrefabStorage()
+    local storage = getStorage()
+
+    assert(storage, ("Could not find prefab storage. Please create a " ..
+      "folder named %q in ServerStorage"):format(Constants.Names.MODEL_CONTAINER))
+
     local prefabs = getPrefabs(storage)
 
     for _, prefab in pairs(prefabs) do
@@ -131,147 +84,40 @@ local function createPrefabModifier(callback)
   end
 end
 
-local function getPlaceholdersForTag(tag)
+local function getClones(tag)
   local found = {}
-  for _, placeholder in pairs(CollectionService:GetTagged(tag)) do
-    if placeholder:IsA("BasePart") then
-      table.insert(found, placeholder)
+  for _, model in pairs(CollectionService:GetTagged(tag)) do
+    if model:IsDescendantOf(workspace) then
+      table.insert(found, model)
     end
   end
   return found
 end
 
--- Moves the placeholder's position to its associated prefab.
---
--- This allows the user to move the cloned prefabs when viewing, and have the
--- placeholder at the same position when switching back.
-local function updatePlaceholderPosition(placeholder)
-  local prefab = placeholder.Link.Value
-  placeholder.CFrame = prefab:GetPrimaryPartCFrame()
-end
+local refreshPrefabs = createPrefabModifier(function(prefab, prefabTag)
+  local clones = getClones(prefabTag)
 
--- Links a cloned in prefab with a placeholder.
---
--- This allows us to move the placeholder back in to the same place later.
-local function linkPrefabToPlaceholder(prefab, placeholder)
-  local linker = Instance.new("ObjectValue")
-  linker.Name = "Link"
-  linker.Value = prefab
-  linker.Parent = placeholder
-  return linker
-end
-
--- Gets the placeholder associated with a prefab.
---
--- This is possible by using linkPrefabToPlaceholder() to associate a prefab
--- with a specific placeholder, and vice versa.
---
--- This can return nil if a placeholder is not associated with the prefab. In
--- this case, we likely have an unlinked placeholder floating around that needs
--- to be cleaned up.
-local function getPlaceholderForPrefab(prefab)
-  local storage = grabPlaceholderStorage()
-
-  for _, placeholder in pairs(storage:GetChildren()) do
-    local link = placeholder:FindFirstChild("Link")
-
-    if link and link.Value == prefab then
-      return placeholder
-    end
-  end
-end
-
--- Moves the PrimaryPart of a model up into the model.
---
--- This is used so that the placeholder can be above ground, while the prefab's
--- PrimaryPart is below it. Normally this would lead to a gap between the prefab
--- and the surface it's supposed to be on, but this function pushes the
-  -- PrimaryPart up into the model so it rests on top as expected.
-local function insetPrimaryPart(model)
-  local primary = model.PrimaryPart
-  primary.CFrame = primary.CFrame * CFrame.new(0, primary.Size.Y, 0)
-end
-
-local function showPrefab(prefab, tag)
-  local placeholders = getPlaceholdersForTag(tag)
-
-  for _, placeholder in pairs(placeholders) do
-    assert(placeholder:IsA("BasePart"), ("%s must be a BasePart to act as "..
-      " a placeholder"):format(placeholder:GetFullName()))
-
-    local clone = prefab:Clone()
-
-    if globalSettings:Get(MOVE_PREFAB_TO_PLACEHOLDER_SURFACE) then
-      insetPrimaryPart(clone)
-    end
+  for _, clone in pairs(clones) do
+    local newClone = prefab:Clone()
 
     if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
-      clone.PrimaryPart.Transparency = 1
+      newClone.PrimaryPart.Transparency = 1
     end
 
     if globalSettings:Get(PREVENT_COLLISIONS) then
-      clone.PrimaryPart.CanCollide = false
+      newClone.PrimaryPart.CanCollide = false
     end
 
-    if placeholder:FindFirstChild("Scale") and placeholder.Scale:IsA("NumberValue") then
-      scale(clone, placeholder.Scale.Value)
-    end
+    -- TODO Add back support for scaling models
+    -- if placeholder:FindFirstChild("Scale") and placeholder.Scale:IsA("NumberValue") then
+    --   scale(newClone, placeholder.Scale.Value)
+    -- end
 
-    clone:SetPrimaryPartCFrame(placeholder.CFrame)
-    clone.Parent = placeholder.Parent
+    newClone:SetPrimaryPartCFrame(clone.PrimaryPart.CFrame)
+    newClone.Parent = clone.Parent
 
-    linkPrefabToPlaceholder(clone, placeholder)
-    placeholder.Parent = grabPlaceholderStorage()
+    clone:Destroy()
   end
-end
+end)
 
-local showAllPrefabs = createPrefabModifier(showPrefab)
-
-local function hidePrefab(_, tag)
-  for _, instance in pairs(CollectionService:GetTagged(tag)) do
-    if instance:IsDescendantOf(workspace) and instance:IsA("Model") then
-      local placeholder = getPlaceholderForPrefab(instance)
-
-      if placeholder then
-        -- This moves the placeholder to the prefab's new position (if it
-        -- changed). This must be done before destroying the link because this
-        -- function relies on the link to access the associated prefab.
-        updatePlaceholderPosition(placeholder)
-
-        placeholder.Link:Destroy()
-        placeholder.Parent = instance.Parent
-      end
-
-      instance:Destroy()
-    end
-  end
-end
-
-local hideAllPrefabs = createPrefabModifier(hidePrefab)
-
--- FIXME This has a tendency to delete placeholders when it shouldn't.
---
--- It's likely to do with the link, it's been seen being created multiple times
--- in a placeholder which would lead to at least one having no value, causing
--- the placeholder to be destroyed.
--- local function removeUnlinkedPlaceholders()
---   for _, placeholder in pairs(grabPlaceholderStorage():GetChildren()) do
---     if not placeholder:FindFirstChild("Link") or not placeholder.Link.Value then
---       placeholder:Destroy()
---     end
---   end
--- end
-
-local function togglePrefabs()
-  local arePrefabsShown = getOrCreatePrefabVisibilityState()
-  if arePrefabsShown.Value then
-    hideAllPrefabs()
-    -- removeUnlinkedPlaceholders()
-  else
-    showAllPrefabs()
-  end
-  arePrefabsShown.Value = not arePrefabsShown.Value
-end
-
-setupContainers()
-button.Click:Connect(togglePrefabs)
+button.Click:Connect(refreshPrefabs)

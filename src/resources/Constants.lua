@@ -3,6 +3,7 @@ return {
 		TOOLBAR = "prefab",
 		TOGGLE_BUTTON_TITLE = "Toggle",
 		TOGGLE_BUTTON_TOOLTIP = "Toggles all of the prefabs between parts and real models",
+    MODEL_CONTAINER = "Prefabs"
 	},
 
 	Images = {
@@ -10,16 +11,8 @@ return {
 	},
 
 	Settings = {
-		MOVE_PREFAB_TO_PLACEHOLDER_SURFACE = "MOVE_PREFAB_TO_PLACEHOLDER_SURFACE",
     MAKE_PRIMARY_PART_INVISIBLE = "MAKE_PRIMARY_PART_INVISIBLE",
 		PREFAB_TAG_PATTERN = "PREFAB_TAG_PATTERN",
-		PREFAB_VISIBILITY_OBJECT_VALUE_NAME = "PREFAB_VISIBILITY_OBJECT_VALUE_NAME",
     PREVENT_COLLISIONS = "PREVENT_COLLISIONS",
-	},
-
-  Containers = {
-    ROOT = "Prefabs",
-    PREFABS = "Models",
-    PLACEHOLDERS = "Placeholders"
   }
 }
