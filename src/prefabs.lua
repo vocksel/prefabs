@@ -125,6 +125,7 @@ return function(plugin)
     CollectionService:AddTag(model, Constants.TAG_PREFIX .. ":" .. name)
 
     local clone = model:Clone()
+    clone.Name = name
     clone.Parent = getOrCreateStorage()
 
     applySettings(model)
