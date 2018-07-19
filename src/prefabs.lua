@@ -20,10 +20,24 @@ return function(plugin)
     return ServerStorage:FindFirstChild(Constants.Names.MODEL_CONTAINER)
   end
 
+  local function getOrCreateStorage()
+    local storage = getStorage()
+
+    if not storage then
+      storage = Instance.new("Folder")
+      storage.Name = Constants.Names.MODEL_CONTAINER
+      storage.Parent = ServerStorage
+    end
+
+    return storage
+  end
+
   local function validatePrefab(prefab)
+    assert(prefab, "Prefab validation failed (recived a nil value)")
+
     local name = prefab.Name
 
-    assert(prefab:IsA("Model"), ("For %s to be a prefab it must be a Model instance"):format(name))
+    assert(typeof(prefab) == "Instance" and prefab:IsA("Model"), ("For %s to be a prefab it must be a Model instance"):format(name))
     assert(prefab.PrimaryPart, ("%s needs a PrimaryPart to be a prefab"):format(name))
   end
 
@@ -66,8 +80,7 @@ return function(plugin)
     return function()
       local storage = getStorage()
 
-      assert(storage, ("Could not find prefab storage. Please create a " ..
-        "folder named %q in ServerStorage"):format(Constants.Names.MODEL_CONTAINER))
+      assert(storage, "There are no prefabs to refresh right now. Register a prefab first and try again")
 
       local prefabs = getPrefabs(storage)
 
@@ -89,24 +102,41 @@ return function(plugin)
     return found
   end
 
+  local function applySettings(prefab)
+    if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
+      prefab.PrimaryPart.Transparency = 1
+    end
+
+    if globalSettings:Get(PREVENT_COLLISIONS) then
+      prefab.PrimaryPart.CanCollide = false
+    end
+
+    -- TODO Add back support for scaling models
+    -- if placeholder:FindFirstChild("Scale") and placeholder.Scale:IsA("NumberValue") then
+    --   scale(newClone, placeholder.Scale.Value)
+    -- end
+  end
+
+  function exports.register(model, name)
+    validatePrefab(model)
+
+    assert(model:IsA("Model"), "Failed to register %s as a prefab. Must be a Model")
+
+    CollectionService:AddTag(model, Constants.TAG_PREFIX .. ":" .. name)
+
+    local clone = model:Clone()
+    clone.Parent = getOrCreateStorage()
+
+    applySettings(model)
+  end
+
   exports.refresh = createPrefabModifier(function(prefab, prefabTag)
     local clones = getClones(prefabTag)
 
     for _, clone in pairs(clones) do
       local newClone = prefab:Clone()
 
-      if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
-        newClone.PrimaryPart.Transparency = 1
-      end
-
-      if globalSettings:Get(PREVENT_COLLISIONS) then
-        newClone.PrimaryPart.CanCollide = false
-      end
-
-      -- TODO Add back support for scaling models
-      -- if placeholder:FindFirstChild("Scale") and placeholder.Scale:IsA("NumberValue") then
-      --   scale(newClone, placeholder.Scale.Value)
-      -- end
+      applySettings(newClone)
 
       newClone:SetPrimaryPartCFrame(clone.PrimaryPart.CFrame)
       newClone.Parent = clone.Parent
