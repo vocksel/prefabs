@@ -181,6 +181,21 @@ return function(plugin)
     exports.register(name, selection)
   end
 
+  local function replaceTag(model, oldTag, newTag)
+    CollectionService:RemoveTag(model, oldTag)
+    CollectionService:AddTag(model, newTag)
+  end
+
+  function exports.rename(oldName, newName)
+    local oldTag = getTagForName(oldName)
+    local newTag = getTagForName(newName)
+
+    for _, model in pairs(CollectionService:GetTagged(oldTag)) do
+      model.Name = newName
+      replaceTag(model, oldTag, newTag)
+    end
+  end
+
   function exports.insert(name)
     local prefab = getPrefab(name)
 
