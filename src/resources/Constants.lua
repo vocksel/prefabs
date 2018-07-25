@@ -28,6 +28,7 @@ return {
   Waypoints = {
     REGISTERED = "Registered prefab",
     INSERTED = "Inserted prefab",
+    UPDATED = "Updated prefab",
     REFRESHED = "Refreshed prefabs"
   }
 }

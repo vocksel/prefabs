@@ -73,6 +73,10 @@ return function(plugin)
     end
   end
 
+  local function getTagForName(name)
+    return globalSettings:Get(TAG_PREFIX) .. ":" .. name
+  end
+
   -- Takes a callback to run on each prefab.
   --
   -- The callback is passed the prefab itself, and the tag associated with the
@@ -106,6 +110,21 @@ return function(plugin)
     return found
   end
 
+  local function applySettings(prefab)
+    if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
+      prefab.PrimaryPart.Transparency = 1
+    end
+
+    if globalSettings:Get(PREVENT_COLLISIONS) then
+      prefab.PrimaryPart.CanCollide = false
+    end
+
+    -- TODO Add back support for scaling models
+    -- if placeholder:FindFirstChild("Scale") and placeholder.Scale:IsA("NumberValue") then
+    --   scale(newClone, placeholder.Scale.Value)
+    -- end
+  end
+
   -- Sets the parent of a cloned in prefab.
   local function setCloneParent(clone)
     local selection = SelectionService:Get()[1]
@@ -114,6 +133,18 @@ return function(plugin)
     else
       clone.Parent = workspace
     end
+  end
+
+  -- Replaces a cloned in prefab with an updated version of the prefab
+  local function updateClone(clone, newModel)
+    local newClone = newModel:Clone()
+
+    applySettings(newClone)
+
+    newClone:SetPrimaryPartCFrame(clone.PrimaryPart.CFrame)
+    newClone.Parent = clone.Parent
+
+    clone.Parent = nil
   end
 
   -- Taken from the Animation Editor's rig builder. Modified to fit our needs.
@@ -132,25 +163,6 @@ return function(plugin)
       print("Unable to find default camera.")
       return Vector3.new(0,5.2,0)
     end
-  end
-
-  local function applySettings(prefab)
-    if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
-      prefab.PrimaryPart.Transparency = 1
-    end
-
-    if globalSettings:Get(PREVENT_COLLISIONS) then
-      prefab.PrimaryPart.CanCollide = false
-    end
-
-    -- TODO Add back support for scaling models
-    -- if placeholder:FindFirstChild("Scale") and placeholder.Scale:IsA("NumberValue") then
-    --   scale(newClone, placeholder.Scale.Value)
-    -- end
-  end
-
-  local function getTagForName(name)
-    return globalSettings:Get(TAG_PREFIX) .. ":" .. name
   end
 
   local function getPrefab(name)
@@ -211,19 +223,43 @@ return function(plugin)
     HistoryService:SetWaypoint(Constants.Waypoints.INSERTED)
   end
 
+  function exports.update(name, model)
+    assert(type(name) == "string", ("Could not use given name (string " ..
+      "expected, got %s)"):format(type(name)))
+
+    validatePrefab(model)
+
+    local prefab = getPrefab(name)
+    local tag = getPrefabTag(prefab)
+
+    assert(prefab, Constants.Errors.PREFAB_NOT_FOUND:format(name))
+
+    if model ~= prefab then
+      model:Clone().Parent = prefab.Parent
+      prefab.Parent = nil
+    end
+
+    for _, clone in pairs(getClones(tag)) do
+      print(clone:GetFullName())
+      if clone ~= model then
+        updateClone(clone, model)
+      end
+    end
+
+    HistoryService:SetWaypoint(Constants.Waypoints.UPDATED)
+  end
+
+  function exports.updateWithSelection(name)
+    local selection = SelectionService:Get()[1]
+    exports.update(name, selection)
+  end
+
   function exports.refresh()
     forEachPrefab(function(prefab, prefabTag)
       local clones = getClones(prefabTag)
 
       for _, clone in pairs(clones) do
-        local newClone = prefab:Clone()
-
-        applySettings(newClone)
-
-        newClone:SetPrimaryPartCFrame(clone.PrimaryPart.CFrame)
-        newClone.Parent = clone.Parent
-
-        clone.Parent = nil
+        updateClone(clone, prefab)
       end
     end)
 
