@@ -116,15 +116,22 @@ return function(plugin)
     end
   end
 
-  -- Moves a model in front of the camera for easy placement
-  local function moveInFrontOfCamera(model)
-    local camera = workspace.CurrentCamera
-    local view = camera.ViewportSize
-    local size = model:GetExtentsSize()
-    local averageLength = (size.X+size.Y+size.Z)/2
-    local ray = camera:ViewportPointToRay(view.X/2, view.Y/2, averageLength)
+  -- Taken from the Animation Editor's rig builder. Modified to fit our needs.
+  local function getCameraLookat(maxRange)
+    maxRange = maxRange or 20
 
-    model:SetPrimaryPartCFrame(CFrame.new(ray.Origin))
+    local camera = workspace.CurrentCamera
+
+    if camera then
+      local ray = Ray.new(camera.CFrame.p, camera.CFrame.lookVector * maxRange)
+      local _, pos = workspace:FindPartOnRay(ray)
+      camera.Focus = CFrame.new(pos)
+      return pos
+    else
+      --Default position if they did weird stuff
+      print("Unable to find default camera.")
+      return Vector3.new(0,5.2,0)
+    end
   end
 
   local function applySettings(prefab)
@@ -181,9 +188,9 @@ return function(plugin)
 
     local clone = prefab:Clone()
 
-    moveInFrontOfCamera(clone)
     applySettings(clone)
     setCloneParent(clone)
+    clone:MoveTo(getCameraLookat())
 
     SelectionService:Set({ clone })
     HistoryService:SetWaypoint(Constants.Waypoints.INSERTED)
