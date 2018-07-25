@@ -23,5 +23,11 @@ return {
     MUST_HAVE_PRIMARY_PART = "%s needs a PrimaryPart to be a prefab",
     NO_PREFAB_TAG = "%s is missing a prefab tag",
     PREFAB_NOT_FOUND = "No prefab named %s found"
+  },
+
+  Waypoints = {
+    REGISTERED = "Registered prefab",
+    INSERTED = "Inserted prefab",
+    REFRESHED = "Refreshed prefabs"
   }
 }

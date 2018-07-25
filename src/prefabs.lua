@@ -156,7 +156,7 @@ return function(plugin)
 
     applySettings(model)
 
-    HistoryService:SetWaypoint("Registered prefab")
+    HistoryService:SetWaypoint(Constants.Waypoints.REGISTERED)
   end
 
   function exports.registerSelection(name)
@@ -185,7 +185,7 @@ return function(plugin)
     setCloneParent(clone)
 
     SelectionService:Set({ clone })
-    HistoryService:SetWaypoint("Inserted prefab")
+    HistoryService:SetWaypoint(Constants.Waypoints.INSERTED)
   end
 
   function exports.refresh()
@@ -204,7 +204,7 @@ return function(plugin)
       end
     end)
 
-    HistoryService:SetWaypoint("Refreshed prefabs")
+    HistoryService:SetWaypoint(Constants.Waypoints.REFRESHED)
   end
 
   return exports
