@@ -79,18 +79,22 @@ return function(plugin)
   -- The callback is passed the prefab itself, and the tag associated with the
   -- prefab.
   local function forEachPrefab(callback)
-      local storage = getStorage()
+    local storage = getStorage()
 
     assert(storage, "No prefabs exist currently, register a prefab first and try again")
 
-      local prefabs = getPrefabs(storage)
+    local prefabs = getPrefabs(storage)
 
-      for _, prefab in pairs(prefabs) do
-        local tag = getPrefabTag(prefab)
-        assert(tag, ("%s is missing a prefab tag"):format(prefab:GetFullName()))
-        callback(prefab, tag)
-      end
+    for _, prefab in pairs(prefabs) do
+      local tag = getPrefabTag(prefab)
+      assert(tag, ("%s is missing a prefab tag"):format(prefab:GetFullName()))
+
+      -- If the callback returns anything we want to exit out of the loop and
+      -- return that result.
+      local result = callback(prefab, tag)
+      if result then return result end
     end
+  end
 
   local function getClones(tag)
     local found = {}
@@ -132,6 +136,15 @@ return function(plugin)
     return globalSettings:Get(TAG_PREFIX) .. ":" .. name
   end
 
+  local function getPrefab(name)
+    local tag = getTagForName(name)
+    return forEachPrefab(function(prefab)
+      if CollectionService:HasTag(prefab, tag) then
+        return prefab
+      end
+    end)
+  end
+
   function exports.register(name, model)
     validatePrefab(model)
 
@@ -151,44 +164,44 @@ return function(plugin)
     exports.register(name, selection)
   end
 
+  local function setCloneParent(clone)
+    local selection = SelectionService:Get()[1]
+    if selection then
+      clone.Parent = selection.Parent
+    else
+      clone.Parent = workspace
+    end
+  end
+
   function exports.insert(name)
-    local tag = getTagForName(name)
+    local prefab = getPrefab(name)
 
-    forEachPrefab(function(prefab)
-      if CollectionService:HasTag(prefab, tag) then
-        local clone = prefab:Clone()
-        local selection = SelectionService:Get()[1]
+    assert(prefab, "No prefab named " .. name .. " found")
 
-        moveInFrontOfCamera(clone)
-        applySettings(clone)
+    local clone = prefab:Clone()
 
-        if selection then
-          clone.Parent = selection.Parent
-        else
-          clone.Parent = workspace
-        end
+    moveInFrontOfCamera(clone)
+    applySettings(clone)
+    setCloneParent(clone)
 
-        SelectionService:Set({ clone })
-      end
-    end)
-
-      HistoryService:SetWaypoint("Inserted prefab")
+    SelectionService:Set({ clone })
+    HistoryService:SetWaypoint("Inserted prefab")
   end
 
   function exports.refresh()
     forEachPrefab(function(prefab, prefabTag)
-    local clones = getClones(prefabTag)
+      local clones = getClones(prefabTag)
 
-    for _, clone in pairs(clones) do
-      local newClone = prefab:Clone()
+      for _, clone in pairs(clones) do
+        local newClone = prefab:Clone()
 
-      applySettings(newClone)
+        applySettings(newClone)
 
-      newClone:SetPrimaryPartCFrame(clone.PrimaryPart.CFrame)
-      newClone.Parent = clone.Parent
+        newClone:SetPrimaryPartCFrame(clone.PrimaryPart.CFrame)
+        newClone.Parent = clone.Parent
 
-      clone.Parent = nil
-    end
+        clone.Parent = nil
+      end
     end)
 
     HistoryService:SetWaypoint("Refreshed prefabs")
