@@ -134,7 +134,7 @@ return function(plugin)
     return globalSettings:Get(TAG_PREFIX) .. ":" .. name
   end
 
-  function exports.register(model, name)
+  function exports.register(name, model)
     validatePrefab(model)
 
     assert(model:IsA("Model"), "Failed to register %s as a prefab. Must be a Model")
@@ -152,7 +152,7 @@ return function(plugin)
 
   function exports.registerSelection(name)
     local selection = SelectionService:Get()[1]
-    exports.register(selection, name)
+    exports.register(name, selection)
   end
 
   function exports.insert(name)
