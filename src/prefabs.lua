@@ -1,5 +1,6 @@
 return function(plugin)
   local CollectionService = game:GetService("CollectionService")
+  local HistoryService = game:GetService("ChangeHistoryService")
   local SelectionService = game:GetService("Selection")
   local ServerStorage = game:GetService("ServerStorage")
 
@@ -145,6 +146,8 @@ return function(plugin)
     clone.Parent = getOrCreateStorage()
 
     applySettings(model)
+
+    HistoryService:SetWaypoint("Registered prefab")
   end
 
   function exports.registerSelection(name)
@@ -155,6 +158,7 @@ return function(plugin)
   function exports.insert(name)
     local tag = getTagForName(name)
 
+    -- oh maybe this is why inserting takes so long??
     return createPrefabModifier(function(prefab)
       if CollectionService:HasTag(prefab, tag) then
         local clone = prefab:Clone()
@@ -171,6 +175,8 @@ return function(plugin)
 
         SelectionService:Set({ clone })
       end
+
+      HistoryService:SetWaypoint("Inserted prefab")
     end)()
   end
 
@@ -185,8 +191,10 @@ return function(plugin)
       newClone:SetPrimaryPartCFrame(clone.PrimaryPart.CFrame)
       newClone.Parent = clone.Parent
 
-      clone:Destroy()
+      clone.Parent = nil
     end
+
+    HistoryService:SetWaypoint("Refreshed prefabs")
   end)
 
   return exports
