@@ -78,11 +78,10 @@ return function(plugin)
   --
   -- The callback is passed the prefab itself, and the tag associated with the
   -- prefab.
-  local function createPrefabModifier(callback)
-    return function()
+  local function forEachPrefab(callback)
       local storage = getStorage()
 
-      assert(storage, "There are no prefabs to refresh right now. Register a prefab first and try again")
+    assert(storage, "No prefabs exist currently, register a prefab first and try again")
 
       local prefabs = getPrefabs(storage)
 
@@ -92,7 +91,6 @@ return function(plugin)
         callback(prefab, tag)
       end
     end
-  end
 
   local function getClones(tag)
     local found = {}
@@ -156,8 +154,7 @@ return function(plugin)
   function exports.insert(name)
     local tag = getTagForName(name)
 
-    -- oh maybe this is why inserting takes so long??
-    return createPrefabModifier(function(prefab)
+    forEachPrefab(function(prefab)
       if CollectionService:HasTag(prefab, tag) then
         local clone = prefab:Clone()
         local selection = SelectionService:Get()[1]
@@ -173,12 +170,13 @@ return function(plugin)
 
         SelectionService:Set({ clone })
       end
+    end)
 
       HistoryService:SetWaypoint("Inserted prefab")
-    end)()
   end
 
-  exports.refresh = createPrefabModifier(function(prefab, prefabTag)
+  function exports.refresh()
+    forEachPrefab(function(prefab, prefabTag)
     local clones = getClones(prefabTag)
 
     for _, clone in pairs(clones) do
@@ -191,9 +189,10 @@ return function(plugin)
 
       clone.Parent = nil
     end
+    end)
 
     HistoryService:SetWaypoint("Refreshed prefabs")
-  end)
+  end
 
   return exports
 end
