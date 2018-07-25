@@ -35,12 +35,11 @@ return function(plugin)
   end
 
   local function validatePrefab(prefab)
-    assert(prefab, "Prefab validation failed (recived a nil value)")
-
     local name = prefab.Name
 
-    assert(typeof(prefab) == "Instance" and prefab:IsA("Model"), ("For %s to be a prefab it must be a Model instance"):format(name))
-    assert(prefab.PrimaryPart, ("%s needs a PrimaryPart to be a prefab"):format(name))
+    assert(typeof(prefab) == "Instance" and prefab:IsA("Model"),
+      Constants.Errors.MUST_BE_MODEL:format(name, type(prefab)))
+    assert(prefab.PrimaryPart, Constants.Errors.MUST_HAVE_PRIMARY_PART:format(name))
   end
 
   -- Gets a flat list of all the prefabs
@@ -81,13 +80,14 @@ return function(plugin)
   local function forEachPrefab(callback)
     local storage = getStorage()
 
-    assert(storage, "No prefabs exist currently, register a prefab first and try again")
+    assert(storage, Constants.Errors.NO_PREFABS_YET)
 
     local prefabs = getPrefabs(storage)
 
     for _, prefab in pairs(prefabs) do
       local tag = getPrefabTag(prefab)
-      assert(tag, ("%s is missing a prefab tag"):format(prefab:GetFullName()))
+
+      assert(tag, Constants.Errors.NO_PREFAB_TAG:format(prefab:GetFullName()))
 
       -- If the callback returns anything we want to exit out of the loop and
       -- return that result.
@@ -176,7 +176,7 @@ return function(plugin)
   function exports.insert(name)
     local prefab = getPrefab(name)
 
-    assert(prefab, "No prefab named " .. name .. " found")
+    assert(prefab, Constants.Errors.PREFAB_NOT_FOUND:format(name))
 
     local clone = prefab:Clone()
 
