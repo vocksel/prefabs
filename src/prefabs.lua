@@ -137,8 +137,6 @@ return function(plugin)
   function exports.register(name, model)
     validatePrefab(model)
 
-    assert(model:IsA("Model"), "Failed to register %s as a prefab. Must be a Model")
-
     CollectionService:AddTag(model, getTagForName(name))
 
     local clone = model:Clone()
