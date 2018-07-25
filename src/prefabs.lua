@@ -106,6 +106,16 @@ return function(plugin)
     return found
   end
 
+  -- Sets the parent of a cloned in prefab.
+  local function setCloneParent(clone)
+    local selection = SelectionService:Get()[1]
+    if selection then
+      clone.Parent = selection.Parent
+    else
+      clone.Parent = workspace
+    end
+  end
+
   -- Moves a model in front of the camera for easy placement
   local function moveInFrontOfCamera(model)
     local camera = workspace.CurrentCamera
@@ -162,15 +172,6 @@ return function(plugin)
   function exports.registerSelection(name)
     local selection = SelectionService:Get()[1]
     exports.register(name, selection)
-  end
-
-  local function setCloneParent(clone)
-    local selection = SelectionService:Get()[1]
-    if selection then
-      clone.Parent = selection.Parent
-    else
-      clone.Parent = workspace
-    end
   end
 
   function exports.insert(name)
