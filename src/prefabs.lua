@@ -240,35 +240,25 @@ return function(plugin)
     HistoryService:SetWaypoint(Constants.Waypoints.INSERTED)
   end
 
-  function exports.update(name, model)
-    assert(type(name) == "string", ("Could not use given name (string " ..
-      "expected, got %s)"):format(type(name)))
+  function exports.update(prefab)
+    validatePrefab(prefab)
 
-    validatePrefab(model)
-
-    local prefab = getPrefab(name)
     local tag = getPrefabTag(prefab)
 
-    assert(prefab, Constants.Errors.PREFAB_NOT_FOUND:format(name))
+    assert(tag, Constants.Errors.NO_PREFAB_TAG:format(prefab.Name))
 
-    if model ~= prefab then
-      model:Clone().Parent = prefab.Parent
-      prefab.Parent = nil
-    end
-
-    for _, clone in pairs(getClones(tag)) do
-      print(clone:GetFullName())
-      if clone ~= model then
-        updateClone(clone, model)
+    for _, otherPrefab in pairs(CollectionService:GetTagged(tag)) do
+      if prefab ~= otherPrefab then
+        updateClone(otherPrefab, prefab)
       end
     end
 
     HistoryService:SetWaypoint(Constants.Waypoints.UPDATED)
   end
 
-  function exports.updateWithSelection(name)
+  function exports.updateWithSelection()
     local selection = SelectionService:Get()[1]
-    exports.update(name, selection)
+    exports.update(selection)
   end
 
   function exports.refresh()
