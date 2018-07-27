@@ -174,13 +174,13 @@ return function(plugin)
     end)
   end
 
-  function exports.register(name, model)
+  function exports.register(model)
     validatePrefab(model)
 
-    CollectionService:AddTag(model, getTagForName(name))
+    CollectionService:AddTag(model, getTagForName(model.Name))
 
     local clone = model:Clone()
-    clone.Name = name
+    clone.Name = model.Name
     clone.Parent = getOrCreateStorage()
 
     applySettings(model)
@@ -188,9 +188,9 @@ return function(plugin)
     HistoryService:SetWaypoint(Constants.Waypoints.REGISTERED)
   end
 
-  function exports.registerSelection(name)
+  function exports.registerSelection()
     local selection = SelectionService:Get()[1]
-    exports.register(name, selection)
+    exports.register(selection)
   end
 
   local function replaceTag(model, oldTag, newTag)
