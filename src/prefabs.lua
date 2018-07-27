@@ -77,6 +77,13 @@ return function(plugin)
     return globalSettings:Get(TAG_PREFIX) .. ":" .. name
   end
 
+  local function stripExistingTag(prefab)
+    local tag = getPrefabTag(prefab)
+    if tag then
+      CollectionService:RemoveTag(prefab, tag)
+    end
+  end
+
   -- Takes a callback to run on each prefab.
   --
   -- The callback is passed the prefab itself, and the tag associated with the
@@ -183,6 +190,7 @@ return function(plugin)
   function exports.register(model)
     validatePrefab(model)
       validateNameAvailable(model.Name)
+      stripExistingTag(model)
 
     CollectionService:AddTag(model, getTagForName(model.Name))
 
