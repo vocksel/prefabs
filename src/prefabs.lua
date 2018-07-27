@@ -213,13 +213,15 @@ return function(plugin)
     CollectionService:AddTag(model, newTag)
   end
 
-  function exports.rename(oldName, newName)
-    local oldTag = getTagForName(oldName)
-    local newTag = getTagForName(newName)
+  -- Updates the prefab's name across all other copies, taking care of changing
+  -- the internal tag as well.
+  function exports.rename(prefab)
+    local tag = getPrefabTag(prefab)
+    local newTag = getTagForName(prefab.Name)
 
-    for _, model in pairs(CollectionService:GetTagged(oldTag)) do
-      model.Name = newName
-      replaceTag(model, oldTag, newTag)
+    for _, model in pairs(CollectionService:GetTagged(tag)) do
+      model.Name = prefab.Name
+      replaceTag(model, tag, newTag)
     end
   end
 
