@@ -264,6 +264,8 @@ return function(plugin)
 
   exports.updateWithSelection = withSelection(exports.update)
 
+  -- DEPRECATED Use `update` instead to update prefabs of the same type, instead
+  -- of every single prefab in the game
   function exports.refresh()
     forEachPrefab(function(prefab, prefabTag)
       local clones = getClones(prefabTag)
