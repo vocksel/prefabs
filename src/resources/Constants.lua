@@ -1,8 +1,5 @@
 return {
 	Names = {
-		TOOLBAR = "prefab",
-		TOGGLE_BUTTON_TITLE = "Toggle",
-		TOGGLE_BUTTON_TOOLTIP = "Toggles all of the prefabs between parts and real models",
     MODEL_CONTAINER = "Prefabs"
 	},
 
