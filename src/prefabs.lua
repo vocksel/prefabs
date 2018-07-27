@@ -208,6 +208,8 @@ return function(plugin)
     applySettings(model)
 
     HistoryService:SetWaypoint(Constants.Waypoints.REGISTERED)
+
+    print("Successfully registered", model)
   end
 
   exports.registerSelection = withSelection(exports.register)
@@ -227,6 +229,8 @@ return function(plugin)
       model.Name = prefab.Name
       replaceTag(model, tag, newTag)
     end
+
+    print("Successfully renamed", prefab)
   end
 
   exports.renameSelection = withSelection(exports.rename)
@@ -244,6 +248,7 @@ return function(plugin)
 
     SelectionService:Set({ clone })
     HistoryService:SetWaypoint(Constants.Waypoints.INSERTED)
+    print("Successfully inserted", clone)
   end
 
   function exports.update(prefab)
@@ -260,6 +265,8 @@ return function(plugin)
     end
 
     HistoryService:SetWaypoint(Constants.Waypoints.UPDATED)
+
+    print("Successfully updated all copies of", prefab)
   end
 
   exports.updateWithSelection = withSelection(exports.update)
