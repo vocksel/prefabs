@@ -17,7 +17,10 @@ return {
     MUST_HAVE_PRIMARY_PART = "%s needs a PrimaryPart to be a prefab",
     NO_PREFAB_TAG = "%s is missing a prefab tag",
     PREFAB_NOT_FOUND = "No prefab named %s found",
-    NAME_ALREADY_EXISTS = "A prefab named %q already exists. Please rename and try again"
+    NAME_ALREADY_EXISTS = "A prefab named %q already exists. Please rename and try again",
+    COULD_NOT_FIND_PREFAB_FROM_SELECTION = "%s is not a prefab, and a " ..
+      "prefab could not be found as an ancestor. Please change your "..
+      "selection and try again"
   },
 
   Waypoints = {

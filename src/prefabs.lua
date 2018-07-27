@@ -18,6 +18,18 @@ return function(plugin)
 
   local exports = {}
 
+  -- Creates a new copy of the first array, with all items from the second
+  -- inserted at the end (in order)
+  local function append(arr1, arr2)
+    local new = {}
+    for _, arr in ipairs{ arr1, arr2 } do
+      for _, v in ipairs(arr) do
+        table.insert(new, v)
+      end
+    end
+    return new
+  end
+
   -- Taken from the Animation Editor's rig builder. Modified to fit our needs.
   local function getCameraLookat(maxRange)
     maxRange = maxRange or 20
@@ -64,8 +76,17 @@ return function(plugin)
     return storage
   end
 
+  local function isAPrefab(instance)
+    return typeof(instance) == "Instance"
+      and instance:IsA("Model")
+      and instance.PrimaryPart
+  end
+
   local function validatePrefab(prefab)
     local name = prefab.Name
+
+    -- Ideally we could reuse isAPrefab() here, but because we need individual
+    -- errors we have to rewrite some stuff.
 
     assert(typeof(prefab) == "Instance" and prefab:IsA("Model"),
       Constants.Errors.MUST_BE_MODEL:format(name, type(prefab)))
@@ -79,13 +100,41 @@ return function(plugin)
     for _, child in pairs(location:GetChildren()) do
       if child:IsA("Folder") then
         getPrefabs(child, found)
-      elseif child:IsA("Model") then
-        validatePrefab(child)
+      elseif isAPrefab(child) then
         table.insert(found, child)
       end
     end
 
     return found
+  end
+
+  local function getClonedPrefabs()
+    return getPrefabs(workspace)
+  end
+
+  local function getSourcePrefabs()
+    local storage = getStorage()
+
+    assert(storage, Constants.Errors.NO_PREFABS_YET)
+
+    return getPrefabs(storage)
+  end
+
+  local function getAllPrefabs()
+    return append(getSourcePrefabs(), getClonedPrefabs())
+  end
+
+  -- Finds the first prefab that is an ancestor of the given instance.
+  --
+  -- We use this so the user can have a part for the selection and still be able
+  -- to update the prefab they're working on. Prior to this you had to select
+  -- the model to update, which breaks your flow.
+  local function getAncestorPrefab(instance)
+    for _, prefab in pairs(getAllPrefabs()) do
+      if instance:IsDescendantOf(prefab) then
+        return prefab
+      end
+    end
   end
 
   -- Gets the tag for the prefab.
@@ -119,11 +168,7 @@ return function(plugin)
   -- The callback is passed the prefab itself, and the tag associated with the
   -- prefab.
   local function forEachPrefab(callback)
-    local storage = getStorage()
-
-    assert(storage, Constants.Errors.NO_PREFABS_YET)
-
-    local prefabs = getPrefabs(storage)
+    local prefabs = getSourcePrefabs()
 
     for _, prefab in pairs(prefabs) do
       local tag = getPrefabTag(prefab)
@@ -141,16 +186,6 @@ return function(plugin)
     forEachPrefab(function(prefab)
       assert(name ~= prefab.Name, Constants.Errors.NAME_ALREADY_EXISTS:format(name))
     end)
-  end
-
-  local function getClones(tag)
-    local found = {}
-    for _, model in pairs(CollectionService:GetTagged(tag)) do
-      if model:IsDescendantOf(workspace) then
-        table.insert(found, model)
-      end
-    end
-    return found
   end
 
   local function applySettings(prefab)
@@ -252,6 +287,11 @@ return function(plugin)
   end
 
   function exports.update(prefab)
+    if typeof(prefab) == "Instance" and not isAPrefab(prefab) then
+      prefab = getAncestorPrefab(prefab)
+      assert(prefab, Constants.Errors.COULD_NOT_FIND_PREFAB_FROM_SELECTION:format(tostring(prefab)))
+    end
+
     validatePrefab(prefab)
 
     local tag = getPrefabTag(prefab)
@@ -275,7 +315,7 @@ return function(plugin)
   -- of every single prefab in the game
   function exports.refresh()
     forEachPrefab(function(prefab, prefabTag)
-      local clones = getClones(prefabTag)
+      local clones = getClonedPrefabs(prefabTag)
 
       for _, clone in pairs(clones) do
         updateClone(clone, prefab)
