@@ -48,9 +48,16 @@ return function(plugin)
     end
   end
 
+  -- Given a callback, runs it with the first instance selection as the argument.
+  --
+  -- This is used in conjunction with our API below to make selection-based
+  -- commands.
   local function withSelection(callback)
     return function()
       local selection = SelectionService:Get()[1]
+
+      assert(selection, Constants.Errors.NOTHING_SELECTED)
+
       return callback(selection)
     end
   end

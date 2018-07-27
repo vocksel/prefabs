@@ -20,7 +20,8 @@ return {
     NAME_ALREADY_EXISTS = "A prefab named %q already exists. Please rename and try again",
     COULD_NOT_FIND_PREFAB_FROM_SELECTION = "%s is not a prefab, and a " ..
       "prefab could not be found as an ancestor. Please change your "..
-      "selection and try again"
+      "selection and try again",
+    NOTHING_SELECTED = "Failed to perform action, nothing selected"
   },
 
   Waypoints = {
