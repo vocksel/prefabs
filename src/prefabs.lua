@@ -18,6 +18,36 @@ return function(plugin)
 
   local exports = {}
 
+  -- Taken from the Animation Editor's rig builder. Modified to fit our needs.
+  local function getCameraLookat(maxRange)
+    maxRange = maxRange or 20
+
+    local camera = workspace.CurrentCamera
+
+    if camera then
+      local ray = Ray.new(camera.CFrame.p, camera.CFrame.lookVector * maxRange)
+      local _, pos = workspace:FindPartOnRay(ray)
+      camera.Focus = CFrame.new(pos)
+      return pos
+    else
+      --Default position if they did weird stuff
+      print("Unable to find default camera.")
+      return Vector3.new(0,5.2,0)
+    end
+  end
+
+  local function withSelection(callback)
+    return function()
+      local selection = SelectionService:Get()[1]
+      return callback(selection)
+    end
+  end
+
+  local function replaceTag(model, oldTag, newTag)
+    CollectionService:RemoveTag(model, oldTag)
+    CollectionService:AddTag(model, newTag)
+  end
+
   local function getStorage()
     return ServerStorage:FindFirstChild(Constants.Names.MODEL_CONTAINER)
   end
@@ -160,24 +190,6 @@ return function(plugin)
     clone.Parent = nil
   end
 
-  -- Taken from the Animation Editor's rig builder. Modified to fit our needs.
-  local function getCameraLookat(maxRange)
-    maxRange = maxRange or 20
-
-    local camera = workspace.CurrentCamera
-
-    if camera then
-      local ray = Ray.new(camera.CFrame.p, camera.CFrame.lookVector * maxRange)
-      local _, pos = workspace:FindPartOnRay(ray)
-      camera.Focus = CFrame.new(pos)
-      return pos
-    else
-      --Default position if they did weird stuff
-      print("Unable to find default camera.")
-      return Vector3.new(0,5.2,0)
-    end
-  end
-
   local function getPrefabByName(name)
     local tag = getTagForName(name)
     return forEachPrefab(function(prefab)
@@ -185,13 +197,6 @@ return function(plugin)
         return prefab
       end
     end)
-  end
-
-  local function withSelection(callback)
-    return function()
-      local selection = SelectionService:Get()[1]
-      return callback(selection)
-    end
   end
 
   function exports.register(model)
@@ -213,11 +218,6 @@ return function(plugin)
   end
 
   exports.registerSelection = withSelection(exports.register)
-
-  local function replaceTag(model, oldTag, newTag)
-    CollectionService:RemoveTag(model, oldTag)
-    CollectionService:AddTag(model, newTag)
-  end
 
   -- Updates the prefab's name across all other copies, taking care of changing
   -- the internal tag as well.
