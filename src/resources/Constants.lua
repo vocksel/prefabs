@@ -1,10 +1,7 @@
 return {
 	Names = {
+		TOOLBAR = "Prefabs",
     MODEL_CONTAINER = "Prefabs"
-	},
-
-	Images = {
-		TOOGLE_BUTTON_ICON = "rbxassetid://413367266",
 	},
 
 	Settings = {
