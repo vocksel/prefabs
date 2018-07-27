@@ -22,7 +22,8 @@ return {
     MUST_BE_MODEL = "For %s to be a prefab it must be a Model instance",
     MUST_HAVE_PRIMARY_PART = "%s needs a PrimaryPart to be a prefab",
     NO_PREFAB_TAG = "%s is missing a prefab tag",
-    PREFAB_NOT_FOUND = "No prefab named %s found"
+    PREFAB_NOT_FOUND = "No prefab named %s found",
+    NAME_ALREADY_EXISTS = "A prefab named %q already exists. Please rename and try again"
   },
 
   Waypoints = {

@@ -100,6 +100,12 @@ return function(plugin)
     end
   end
 
+  local function validateNameAvailable(name)
+    forEachPrefab(function(prefab)
+      assert(name ~= prefab.Name, Constants.Errors.NAME_ALREADY_EXISTS:format(name))
+    end)
+  end
+
   local function getClones(tag)
     local found = {}
     for _, model in pairs(CollectionService:GetTagged(tag)) do
@@ -176,6 +182,7 @@ return function(plugin)
 
   function exports.register(model)
     validatePrefab(model)
+      validateNameAvailable(model.Name)
 
     CollectionService:AddTag(model, getTagForName(model.Name))
 
