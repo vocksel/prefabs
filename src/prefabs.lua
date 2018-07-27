@@ -187,6 +187,13 @@ return function(plugin)
     end)
   end
 
+  local function withSelection(callback)
+    return function()
+      local selection = SelectionService:Get()[1]
+      return callback(selection)
+    end
+  end
+
   function exports.register(model)
     validatePrefab(model)
       validateNameAvailable(model.Name)
@@ -203,10 +210,7 @@ return function(plugin)
     HistoryService:SetWaypoint(Constants.Waypoints.REGISTERED)
   end
 
-  function exports.registerSelection()
-    local selection = SelectionService:Get()[1]
-    exports.register(selection)
-  end
+  exports.registerSelection = withSelection(exports.register)
 
   local function replaceTag(model, oldTag, newTag)
     CollectionService:RemoveTag(model, oldTag)
@@ -224,6 +228,8 @@ return function(plugin)
       replaceTag(model, tag, newTag)
     end
   end
+
+  exports.renameSelection = withSelection(exports.rename)
 
   function exports.insert(name)
     local prefab = getPrefab(name)
@@ -256,10 +262,7 @@ return function(plugin)
     HistoryService:SetWaypoint(Constants.Waypoints.UPDATED)
   end
 
-  function exports.updateWithSelection()
-    local selection = SelectionService:Get()[1]
-    exports.update(selection)
-  end
+  exports.updateWithSelection = withSelection(exports.update)
 
   function exports.refresh()
     forEachPrefab(function(prefab, prefabTag)
