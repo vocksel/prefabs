@@ -11,6 +11,13 @@ local actions = {
     tooltip = "Registers the selection as a prefab",
     icon = "rbxassetid://413367266",
     callback = prefabs.registerSelection
+  },
+
+  {
+    name = "Update",
+    tooltip = "With a prefab selected, update all others of the same type to match",
+    icon = "", -- TODO Get an icon
+    callback = prefabs.updateWithSelection
   }
 }
 
