@@ -178,7 +178,7 @@ return function(plugin)
     end
   end
 
-  local function getPrefab(name)
+  local function getPrefabByName(name)
     local tag = getTagForName(name)
     return forEachPrefab(function(prefab)
       if CollectionService:HasTag(prefab, tag) then
@@ -236,7 +236,7 @@ return function(plugin)
   exports.renameSelection = withSelection(exports.rename)
 
   function exports.insert(name)
-    local prefab = getPrefab(name)
+    local prefab = getPrefabByName(name)
 
     assert(prefab, Constants.Errors.PREFAB_NOT_FOUND:format(name))
 
