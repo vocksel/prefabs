@@ -1,6 +1,4 @@
-local resources = script:FindFirstChild("resources")
-
-local Constants = require(resources:FindFirstChild("Constants"))
+local Constants = require(script.Parent.Constants)
 local prefabs = require(script.prefabs)(plugin)
 
 local toolbar = plugin:CreateToolbar(Constants.Names.TOOLBAR)

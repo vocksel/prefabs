@@ -4,10 +4,8 @@ return function(plugin)
   local SelectionService = game:GetService("Selection")
   local ServerStorage = game:GetService("ServerStorage")
 
-  local resources = script.Parent:FindFirstChild("resources")
-
-  local Constants = require(resources:FindFirstChild("Constants"))
-  local PluginSettings = require(resources:FindFirstChild("PluginSettings"))(plugin)
+  local Constants = require(script.Parent.Constants)
+  local PluginSettings = require(script.Parent.PluginSettings)(plugin)
   local helpers = require(script.Parent.helpers)
   local tagging = require(script.Parent.tagging)
   -- local scale = require(script.scale)

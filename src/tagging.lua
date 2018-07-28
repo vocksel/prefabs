@@ -5,7 +5,7 @@
 local CollectionService = game:GetService("CollectionService")
 local ServerStorage = game:GetService("ServerStorage")
 
-local Constants = require(script.Parent.resources.Constants)
+local Constants = require(script.Parent.Constants)
 local helpers = require(script.Parent.helpers)
 
 local exports = {}
