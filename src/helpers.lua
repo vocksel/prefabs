@@ -4,7 +4,7 @@
 
 local SelectionService = game:GetService("Selection")
 
-local Constants = require(script.Parent.Constants)
+local constants = require(script.Parent.constants)
 
 local exports = {}
 
@@ -90,7 +90,7 @@ function exports.withSelection(callback)
   return function()
     local selection = SelectionService:Get()[1]
 
-    assert(selection, Constants.Errors.NOTHING_SELECTED)
+    assert(selection, constants.errors.NOTHING_SELECTED)
 
     return callback(selection)
   end

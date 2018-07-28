@@ -1,10 +1,10 @@
 return {
-	Names = {
+	names = {
 		TOOLBAR = "Prefabs",
     MODEL_CONTAINER = "Prefabs"
 	},
 
-	Settings = {
+	settings = {
     MAKE_PRIMARY_PART_INVISIBLE = "MAKE_PRIMARY_PART_INVISIBLE",
 		PREFAB_TAG_PATTERN = "PREFAB_TAG_PATTERN",
     PREVENT_COLLISIONS = "PREVENT_COLLISIONS",
@@ -13,7 +13,7 @@ return {
 
   -- All of this is related to tagging the prefabs and connecting with the Tag
   -- Editor plugin.
-  Tagging = {
+  tagging = {
     -- These names are defined from the Tag Editor plugin. They're being set as
     -- constants incase the names change in the future.
     TAG_FOLDER_NAME = "TagList",
@@ -22,7 +22,7 @@ return {
     TAG_GROUP_NAME = "Prefabs"
   },
 
-  Errors = {
+  errors = {
     NO_PREFABS_YET = "No prefabs exist currently, register a prefab first and try again.",
     MUST_BE_MODEL = "For %s to be a prefab it must be a Model instance",
     MUST_HAVE_PRIMARY_PART = "%s needs a PrimaryPart to be a prefab",
@@ -35,7 +35,7 @@ return {
     NOTHING_SELECTED = "Failed to perform action, nothing selected"
   },
 
-  Waypoints = {
+  waypoints = {
     REGISTERED = "Registered prefab",
     INSERTED = "Inserted prefab",
     UPDATED = "Updated prefab",

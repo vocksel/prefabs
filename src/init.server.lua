@@ -1,7 +1,7 @@
-local Constants = require(script.Parent.Constants)
+local constants = require(script.constants)
 local prefabs = require(script.prefabs)(plugin)
 
-local toolbar = plugin:CreateToolbar(Constants.Names.TOOLBAR)
+local toolbar = plugin:CreateToolbar(constants.names.TOOLBAR)
 
 local actions = {
   {

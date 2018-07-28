@@ -1,19 +1,19 @@
-local Constants = require(script.Parent.Constants)
-local Settings = Constants.Settings
+local constants = require(script.Parent.constants)
+local settings = constants.settings
 
 local DEFAULT_SETTINGS = {
 	-- Turns the PrimaryParts of every prefab invisible when cloning it in.
 	--
 	-- This allows you to be aware of where you're positioner is while working,
 	-- while not having to worry about changing its visibility when it's cloned in.
-	[Settings.MAKE_PRIMARY_PART_INVISIBLE] = true,
+	[settings.MAKE_PRIMARY_PART_INVISIBLE] = true,
 
   -- This gets prepended to every prefab tag so there's no chance of naming collisions.
-  [Settings.TAG_PREFIX] = "prefab",
+  [settings.TAG_PREFIX] = "prefab",
 
   -- Forces CanCollide to be false for both the PrimaryPart of the prefab and the
   -- placeholder itself (when showing the prefab).
-  [Settings.PREVENT_COLLISIONS] = true
+  [settings.PREVENT_COLLISIONS] = true
 }
 
 return function(plugin)

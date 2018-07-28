@@ -4,7 +4,7 @@ return function(plugin)
   local SelectionService = game:GetService("Selection")
   local ServerStorage = game:GetService("ServerStorage")
 
-  local Constants = require(script.Parent.Constants)
+  local constants = require(script.Parent.constants)
   local PluginSettings = require(script.Parent.PluginSettings)(plugin)
   local helpers = require(script.Parent.helpers)
   local tagging = require(script.Parent.tagging)
@@ -12,18 +12,18 @@ return function(plugin)
 
   local globalSettings = PluginSettings.new("global")
 
-  local MAKE_PRIMARY_PART_INVISIBLE = Constants.Settings.MAKE_PRIMARY_PART_INVISIBLE
-  local TAG_PREFIX = Constants.Settings.TAG_PREFIX
-  local PREVENT_COLLISIONS = Constants.Settings.PREVENT_COLLISIONS
+  local MAKE_PRIMARY_PART_INVISIBLE = constants.settings.MAKE_PRIMARY_PART_INVISIBLE
+  local TAG_PREFIX = constants.settings.TAG_PREFIX
+  local PREVENT_COLLISIONS = constants.settings.PREVENT_COLLISIONS
 
   local exports = {}
 
   local function getStorage()
-    return ServerStorage:FindFirstChild(Constants.Names.MODEL_CONTAINER)
+    return ServerStorage:FindFirstChild(constants.names.MODEL_CONTAINER)
   end
 
   local function getOrCreateStorage()
-    return getStorage() or helpers.newFolder(Constants.Names.MODEL_CONTAINER, ServerStorage)
+    return getStorage() or helpers.newFolder(constants.names.MODEL_CONTAINER, ServerStorage)
   end
 
   local function isAPrefab(instance)
@@ -39,8 +39,8 @@ return function(plugin)
     -- errors we have to rewrite some stuff.
 
     assert(typeof(prefab) == "Instance" and prefab:IsA("Model"),
-      Constants.Errors.MUST_BE_MODEL:format(name, type(prefab)))
-    assert(prefab.PrimaryPart, Constants.Errors.MUST_HAVE_PRIMARY_PART:format(name))
+      constants.errors.MUST_BE_MODEL:format(name, type(prefab)))
+    assert(prefab.PrimaryPart, constants.errors.MUST_HAVE_PRIMARY_PART:format(name))
   end
 
   local function getPrefabs(parent)
@@ -60,7 +60,7 @@ return function(plugin)
   local function getSourcePrefabs()
     local storage = getStorage()
 
-    assert(storage, Constants.Errors.NO_PREFABS_YET)
+    assert(storage, constants.errors.NO_PREFABS_YET)
 
     return getPrefabs(storage)
   end
@@ -128,7 +128,7 @@ return function(plugin)
     for _, prefab in pairs(prefabs) do
       local tag = getPrefabTag(prefab)
 
-      assert(tag, Constants.Errors.NO_PREFAB_TAG:format(prefab:GetFullName()))
+      assert(tag, constants.errors.NO_PREFAB_TAG:format(prefab:GetFullName()))
 
       -- If the callback returns anything we want to exit out of the loop and
       -- return that result.
@@ -139,7 +139,7 @@ return function(plugin)
 
   local function validateNameAvailable(name)
     forEachPrefab(function(prefab)
-      assert(name ~= prefab.Name, Constants.Errors.NAME_ALREADY_EXISTS:format(name))
+      assert(name ~= prefab.Name, constants.errors.NAME_ALREADY_EXISTS:format(name))
     end)
   end
 
@@ -205,7 +205,7 @@ return function(plugin)
 
     applySettings(model)
 
-    HistoryService:SetWaypoint(Constants.Waypoints.REGISTERED)
+    HistoryService:SetWaypoint(constants.waypoints.REGISTERED)
 
     print("Successfully registered", model)
   end
@@ -232,7 +232,7 @@ return function(plugin)
   function exports.insert(name)
     local prefab = getPrefabByName(name)
 
-    assert(prefab, Constants.Errors.PREFAB_NOT_FOUND:format(name))
+    assert(prefab, constants.errors.PREFAB_NOT_FOUND:format(name))
 
     local clone = prefab:Clone()
 
@@ -241,21 +241,21 @@ return function(plugin)
     clone:MoveTo(helpers.getCameraLookat())
 
     SelectionService:Set({ clone })
-    HistoryService:SetWaypoint(Constants.Waypoints.INSERTED)
+    HistoryService:SetWaypoint(constants.waypoints.INSERTED)
     print("Successfully inserted", clone)
   end
 
   function exports.update(prefab)
     if typeof(prefab) == "Instance" and not isAPrefab(prefab) then
       prefab = getAncestorPrefab(prefab)
-      assert(prefab, Constants.Errors.COULD_NOT_FIND_PREFAB_FROM_SELECTION:format(tostring(prefab)))
+      assert(prefab, constants.errors.COULD_NOT_FIND_PREFAB_FROM_SELECTION:format(tostring(prefab)))
     end
 
     validatePrefab(prefab)
 
     local tag = getPrefabTag(prefab)
 
-    assert(tag, Constants.Errors.NO_PREFAB_TAG:format(prefab.Name))
+    assert(tag, constants.errors.NO_PREFAB_TAG:format(prefab.Name))
 
     for _, otherPrefab in pairs(CollectionService:GetTagged(tag)) do
       if prefab ~= otherPrefab then
@@ -263,7 +263,7 @@ return function(plugin)
       end
     end
 
-    HistoryService:SetWaypoint(Constants.Waypoints.UPDATED)
+    HistoryService:SetWaypoint(constants.waypoints.UPDATED)
 
     print("Successfully updated all copies of", prefab)
   end
@@ -278,7 +278,7 @@ return function(plugin)
       updateClone(clone, source)
     end
 
-    HistoryService:SetWaypoint(Constants.Waypoints.REFRESHED)
+    HistoryService:SetWaypoint(constants.waypoints.REFRESHED)
   end
 
   function exports.delete(prefab)
@@ -290,7 +290,7 @@ return function(plugin)
       end
     end
 
-    HistoryService:SetWaypoint(Constants.Waypoints.DELETED)
+    HistoryService:SetWaypoint(constants.waypoints.DELETED)
   end
 
   exports.deleteSelection = helpers.withSelection(exports.delete)
@@ -304,7 +304,7 @@ return function(plugin)
       end
     end
 
-    HistoryService:SetWaypoint(Constants.Waypoints.DANGEROUSLY_DELETED)
+    HistoryService:SetWaypoint(constants.waypoints.DANGEROUSLY_DELETED)
   end
 
   exports.dangerouslyDeleteSelection = helpers.withSelection(exports.dangerouslyDelete)
