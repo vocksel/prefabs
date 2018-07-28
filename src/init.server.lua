@@ -35,7 +35,11 @@ for _, info in pairs(actions) do
   local button = toolbar:CreateButton(info.name, info.tooltip, info.icon)
   button.Click:Connect(info.callback)
 
-  local action = plugin:CreatePluginAction(info.id, info.name, info.tooltip)
+  -- The buttons are scoped under the toolbar, but the actions don't have that
+  -- benefit. Prepending "Prefabs" makes them easily searchable.
+  local actionName = "Prefabs: " .. info.name
+
+  local action = plugin:CreatePluginAction(info.id, actionName, info.tooltip)
   action.Triggered:Connect(info.callback)
 end
 
