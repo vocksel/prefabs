@@ -163,6 +163,17 @@ return function(plugin)
     return globalSettings:Get(TAG_PREFIX) .. ":" .. name
   end
 
+  local function getSourcePrefab(prefab)
+    local tag = getPrefabTag(prefab)
+
+    for _, otherPrefab in pairs(getSourcePrefabs()) do
+      if CollectionService:HasTag(otherPrefab, tag) then
+        return otherPrefab
+      end
+    end
+  end
+
+
   local function stripExistingTag(prefab)
     local tag = getPrefabTag(prefab)
     if tag then
@@ -243,8 +254,8 @@ return function(plugin)
 
   function exports.register(model)
     validatePrefab(model)
-      validateNameAvailable(model.Name)
-      stripExistingTag(model)
+    validateNameAvailable(model.Name)
+    stripExistingTag(model)
 
     CollectionService:AddTag(model, getTagForName(model.Name))
 
@@ -321,13 +332,10 @@ return function(plugin)
   -- DEPRECATED Use `update` instead to update prefabs of the same type, instead
   -- of every single prefab in the game
   function exports.refresh()
-    forEachPrefab(function(prefab, prefabTag)
-      local clones = getClonedPrefabs(prefabTag)
-
-      for _, clone in pairs(clones) do
-        updateClone(clone, prefab)
-      end
-    end)
+    for _, clone in pairs(getClonedPrefabs()) do
+      local source = getSourcePrefab(clone)
+      updateClone(clone, source)
+    end
 
     HistoryService:SetWaypoint(Constants.Waypoints.REFRESHED)
   end
