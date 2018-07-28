@@ -11,6 +11,17 @@ return {
     TAG_PREFIX = "TAG_PREFIX"
   },
 
+  -- All of this is related to tagging the prefabs and connecting with the Tag
+  -- Editor plugin.
+  Tagging = {
+    -- These names are defined from the Tag Editor plugin. They're being set as
+    -- constants incase the names change in the future.
+    TAG_FOLDER_NAME = "TagList",
+    TAG_GROUP_FOLDER_NAME = "TagGroupList",
+
+    TAG_GROUP_NAME = "Prefabs"
+  },
+
   Errors = {
     NO_PREFABS_YET = "No prefabs exist currently, register a prefab first and try again.",
     MUST_BE_MODEL = "For %s to be a prefab it must be a Model instance",

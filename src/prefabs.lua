@@ -48,6 +48,28 @@ return function(plugin)
     end
   end
 
+  local function newFolder(name, parent)
+    local folder = Instance.new("Folder")
+    folder.Name = name
+    folder.Parent = parent
+
+    return folder
+  end
+
+  local function mkdir(root, ...)
+    assert(root, "argument #1 to mkdir missing, need an instance")
+
+    local parent = root
+    local lastFolder
+
+    for _, name in pairs{ ... } do
+      lastFolder = parent:FindFirstChild(name) or newFolder(name, parent)
+      parent = lastFolder
+    end
+
+    return lastFolder
+  end
+
   -- Given a callback, runs it with the first instance selection as the argument.
   --
   -- This is used in conjunction with our API below to make selection-based
@@ -67,20 +89,25 @@ return function(plugin)
     CollectionService:AddTag(model, newTag)
   end
 
+  -- TODO Add support for removing tags from the editor
+  -- When no other prefab tags are present it should also remove the tag group
+  local function registerWithTagEditor(tag)
+    mkdir(ServerStorage, "TagGroupList", Constants.Tagging.TAG_GROUP_NAME)
+
+    local tagFolder = mkdir(ServerStorage, Constants.Tagging.TAG_FOLDER_NAME, tag)
+
+    local group = Instance.new("StringValue")
+    group.Name = "Group"
+    group.Value = Constants.Tagging.TAG_GROUP_NAME
+    group.Parent = tagFolder
+  end
+
   local function getStorage()
     return ServerStorage:FindFirstChild(Constants.Names.MODEL_CONTAINER)
   end
 
   local function getOrCreateStorage()
-    local storage = getStorage()
-
-    if not storage then
-      storage = Instance.new("Folder")
-      storage.Name = Constants.Names.MODEL_CONTAINER
-      storage.Parent = ServerStorage
-    end
-
-    return storage
+    return getStorage() or newFolder(Constants.Names.MODEL_CONTAINER, ServerStorage)
   end
 
   local function isAPrefab(instance)
@@ -173,7 +200,6 @@ return function(plugin)
     end
   end
 
-
   local function stripExistingTag(prefab)
     local tag = getPrefabTag(prefab)
     if tag then
@@ -257,7 +283,10 @@ return function(plugin)
     validateNameAvailable(model.Name)
     stripExistingTag(model)
 
-    CollectionService:AddTag(model, getTagForName(model.Name))
+    local tag = getTagForName(model.Name)
+
+    registerWithTagEditor(tag)
+    CollectionService:AddTag(model, tag)
 
     local clone = model:Clone()
     clone.Name = model.Name
