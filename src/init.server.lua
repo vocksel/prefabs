@@ -23,7 +23,7 @@ local actions = {
   {
     name = "Rename",
     tooltip = "With a prefab selected, updates the name and tag for all other copies to match",
-    icon = "",
+    icon = "", -- TODO Get an icon
     callback = prefabs.renameSelection
   },
 }
