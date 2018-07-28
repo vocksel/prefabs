@@ -8,6 +8,8 @@ return function(plugin)
 
   local Constants = require(resources:FindFirstChild("Constants"))
   local PluginSettings = require(resources:FindFirstChild("PluginSettings"))(plugin)
+  local helpers = require(script.Parent.helpers)
+  local tagging = require(script.Parent.tagging)
   -- local scale = require(script.scale)
 
   local globalSettings = PluginSettings.new("global")
@@ -18,96 +20,12 @@ return function(plugin)
 
   local exports = {}
 
-  -- Creates a new copy of the first array, with all items from the second
-  -- inserted at the end (in order)
-  local function append(arr1, arr2)
-    local new = {}
-    for _, arr in ipairs{ arr1, arr2 } do
-      for _, v in ipairs(arr) do
-        table.insert(new, v)
-      end
-    end
-    return new
-  end
-
-  -- Taken from the Animation Editor's rig builder. Modified to fit our needs.
-  local function getCameraLookat(maxRange)
-    maxRange = maxRange or 20
-
-    local camera = workspace.CurrentCamera
-
-    if camera then
-      local ray = Ray.new(camera.CFrame.p, camera.CFrame.lookVector * maxRange)
-      local _, pos = workspace:FindPartOnRay(ray)
-      camera.Focus = CFrame.new(pos)
-      return pos
-    else
-      --Default position if they did weird stuff
-      print("Unable to find default camera.")
-      return Vector3.new(0,5.2,0)
-    end
-  end
-
-  local function newFolder(name, parent)
-    local folder = Instance.new("Folder")
-    folder.Name = name
-    folder.Parent = parent
-
-    return folder
-  end
-
-  local function mkdir(root, ...)
-    assert(root, "argument #1 to mkdir missing, need an instance")
-
-    local parent = root
-    local lastFolder
-
-    for _, name in pairs{ ... } do
-      lastFolder = parent:FindFirstChild(name) or newFolder(name, parent)
-      parent = lastFolder
-    end
-
-    return lastFolder
-  end
-
-  -- Given a callback, runs it with the first instance selection as the argument.
-  --
-  -- This is used in conjunction with our API below to make selection-based
-  -- commands.
-  local function withSelection(callback)
-    return function()
-      local selection = SelectionService:Get()[1]
-
-      assert(selection, Constants.Errors.NOTHING_SELECTED)
-
-      return callback(selection)
-    end
-  end
-
-  local function replaceTag(model, oldTag, newTag)
-    CollectionService:RemoveTag(model, oldTag)
-    CollectionService:AddTag(model, newTag)
-  end
-
-  -- TODO Add support for removing tags from the editor
-  -- When no other prefab tags are present it should also remove the tag group
-  local function registerWithTagEditor(tag)
-    mkdir(ServerStorage, "TagGroupList", Constants.Tagging.TAG_GROUP_NAME)
-
-    local tagFolder = mkdir(ServerStorage, Constants.Tagging.TAG_FOLDER_NAME, tag)
-
-    local group = Instance.new("StringValue")
-    group.Name = "Group"
-    group.Value = Constants.Tagging.TAG_GROUP_NAME
-    group.Parent = tagFolder
-  end
-
   local function getStorage()
     return ServerStorage:FindFirstChild(Constants.Names.MODEL_CONTAINER)
   end
 
   local function getOrCreateStorage()
-    return getStorage() or newFolder(Constants.Names.MODEL_CONTAINER, ServerStorage)
+    return getStorage() or helpers.newFolder(Constants.Names.MODEL_CONTAINER, ServerStorage)
   end
 
   local function isAPrefab(instance)
@@ -155,7 +73,7 @@ return function(plugin)
   end
 
   local function getAllPrefabs()
-    return append(getSourcePrefabs(), getClonedPrefabs())
+    return helpers.append(getSourcePrefabs(), getClonedPrefabs())
   end
 
   -- Finds the first prefab that is an ancestor of the given instance.
@@ -285,7 +203,7 @@ return function(plugin)
 
     local tag = getTagForName(model.Name)
 
-    registerWithTagEditor(tag)
+    tagging.registerWithTagEditor(tag)
     CollectionService:AddTag(model, tag)
 
     local clone = model:Clone()
@@ -299,23 +217,24 @@ return function(plugin)
     print("Successfully registered", model)
   end
 
-  exports.registerSelection = withSelection(exports.register)
+  exports.registerSelection = helpers.withSelection(exports.register)
 
   -- Updates the prefab's name across all other copies, taking care of changing
   -- the internal tag as well.
+  -- TODO Add tag editor support. Replacing the tag won't clean up the old one
   function exports.rename(prefab)
     local tag = getPrefabTag(prefab)
     local newTag = getTagForName(prefab.Name)
 
     for _, model in pairs(CollectionService:GetTagged(tag)) do
       model.Name = prefab.Name
-      replaceTag(model, tag, newTag)
+      tagging.replaceTag(model, tag, newTag)
     end
 
     print("Successfully renamed", prefab)
   end
 
-  exports.renameSelection = withSelection(exports.rename)
+  exports.renameSelection = helpers.withSelection(exports.rename)
 
   function exports.insert(name)
     local prefab = getPrefabByName(name)
@@ -326,7 +245,7 @@ return function(plugin)
 
     applySettings(clone)
     setCloneParent(clone)
-    clone:MoveTo(getCameraLookat())
+    clone:MoveTo(helpers.getCameraLookat())
 
     SelectionService:Set({ clone })
     HistoryService:SetWaypoint(Constants.Waypoints.INSERTED)
@@ -356,7 +275,7 @@ return function(plugin)
     print("Successfully updated all copies of", prefab)
   end
 
-  exports.updateWithSelection = withSelection(exports.update)
+  exports.updateWithSelection = helpers.withSelection(exports.update)
 
   -- DEPRECATED Use `update` instead to update prefabs of the same type, instead
   -- of every single prefab in the game
@@ -381,7 +300,7 @@ return function(plugin)
     HistoryService:SetWaypoint(Constants.Waypoints.DELETED)
   end
 
-  exports.deleteSelection = withSelection(exports.delete)
+  exports.deleteSelection = helpers.withSelection(exports.delete)
 
   function exports.dangerouslyDelete(prefab)
     local tag = getPrefabTag(prefab)
@@ -395,7 +314,7 @@ return function(plugin)
     HistoryService:SetWaypoint(Constants.Waypoints.DANGEROUSLY_DELETED)
   end
 
-  exports.dangerouslyDeleteSelection = withSelection(exports.dangerouslyDelete)
+  exports.dangerouslyDeleteSelection = helpers.withSelection(exports.dangerouslyDelete)
 
   return exports
 end
