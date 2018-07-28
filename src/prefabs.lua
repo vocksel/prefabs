@@ -45,18 +45,13 @@ return function(plugin)
     assert(prefab.PrimaryPart, Constants.Errors.MUST_HAVE_PRIMARY_PART:format(name))
   end
 
-  -- Gets a flat list of all the prefabs
-  local function getPrefabs(location, found)
-    found = found or {}
-
-    for _, child in pairs(location:GetChildren()) do
-      if child:IsA("Folder") then
-        getPrefabs(child, found)
-      elseif isAPrefab(child) then
+  local function getPrefabs(parent)
+    local found = {}
+    for _, child in pairs(parent:GetChildren()) do
+      if isAPrefab(child) then
         table.insert(found, child)
       end
     end
-
     return found
   end
 
