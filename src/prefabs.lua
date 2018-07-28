@@ -332,5 +332,33 @@ return function(plugin)
     HistoryService:SetWaypoint(Constants.Waypoints.REFRESHED)
   end
 
+  function exports.delete(prefab)
+    local tag = getPrefabTag(prefab)
+
+    for _, otherPrefab in pairs(getSourcePrefabs()) do
+      if CollectionService:HasTag(otherPrefab, tag) then
+        otherPrefab.Parent = nil
+      end
+    end
+
+    HistoryService:SetWaypoint(Constants.Waypoints.DELETED)
+  end
+
+  exports.deleteSelection = withSelection(exports.delete)
+
+  function exports.dangerouslyDelete(prefab)
+    local tag = getPrefabTag(prefab)
+
+    for _, otherPrefab in pairs(getAllPrefabs()) do
+      if CollectionService:HasTag(otherPrefab, tag) then
+        otherPrefab.Parent = nil
+      end
+    end
+
+    HistoryService:SetWaypoint(Constants.Waypoints.DANGEROUSLY_DELETED)
+  end
+
+  exports.dangerouslyDeleteSelection = withSelection(exports.dangerouslyDelete)
+
   return exports
 end

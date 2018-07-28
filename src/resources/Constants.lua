@@ -28,6 +28,8 @@ return {
     REGISTERED = "Registered prefab",
     INSERTED = "Inserted prefab",
     UPDATED = "Updated prefab",
-    REFRESHED = "Refreshed prefabs"
+    REFRESHED = "Refreshed prefabs",
+    DELETED = "Deleted prefab",
+    DANGEROUSLY_DELETED = "Deleted prefab clones"
   }
 }
