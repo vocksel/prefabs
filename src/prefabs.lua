@@ -118,29 +118,10 @@ return function(plugin)
     end
   end
 
-  -- Takes a callback to run on each prefab.
-  --
-  -- The callback is passed the prefab itself, and the tag associated with the
-  -- prefab.
-  local function forEachPrefab(callback)
-    local prefabs = getSourcePrefabs()
-
-    for _, prefab in pairs(prefabs) do
-      local tag = getPrefabTag(prefab)
-
-      assert(tag, constants.errors.NO_PREFAB_TAG:format(prefab:GetFullName()))
-
-      -- If the callback returns anything we want to exit out of the loop and
-      -- return that result.
-      local result = callback(prefab, tag)
-      if result then return result end
-    end
-  end
-
   local function validateNameAvailable(name)
-    forEachPrefab(function(prefab)
+    for _, prefab in pairs(getSourcePrefabs()) do
       assert(name ~= prefab.Name, constants.errors.NAME_ALREADY_EXISTS:format(name))
-    end)
+    end
   end
 
   local function applySettings(prefab)
@@ -182,11 +163,11 @@ return function(plugin)
 
   local function getPrefabByName(name)
     local tag = getTagForName(name)
-    return forEachPrefab(function(prefab)
+    for _, prefab in pairs(getSourcePrefabs()) do
       if CollectionService:HasTag(prefab, tag) then
         return prefab
       end
-    end)
+    end
   end
 
   function exports.register(model)
