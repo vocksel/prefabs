@@ -45,9 +45,9 @@ return function(plugin)
 
   local function getPrefabs(parent)
     local found = {}
-    for _, child in pairs(parent:GetChildren()) do
-      if isAPrefab(child) then
-        table.insert(found, child)
+    for _, descendant in pairs(parent:GetDescendants()) do
+      if isAPrefab(descendant) then
+        table.insert(found, descendant)
       end
     end
     return found
@@ -76,7 +76,7 @@ return function(plugin)
   -- the model to update, which breaks your flow.
   local function getAncestorPrefab(instance)
     for _, prefab in pairs(getAllPrefabs()) do
-      if instance:IsDescendantOf(prefab) then
+      if prefab:IsAncestorOf(instance) then
         return prefab
       end
     end
