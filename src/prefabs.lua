@@ -58,10 +58,7 @@ return function(plugin)
   end
 
   local function getSourcePrefabs()
-    local storage = getStorage()
-
-    assert(storage, constants.errors.NO_PREFABS_YET)
-
+    local storage = getOrCreateStorage()
     return getPrefabs(storage)
   end
 
