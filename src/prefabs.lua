@@ -18,14 +18,6 @@ return function(plugin)
 
   local exports = {}
 
-  local function getStorage()
-    return ServerStorage:FindFirstChild(constants.names.MODEL_CONTAINER)
-  end
-
-  local function getOrCreateStorage()
-    return getStorage() or helpers.newFolder(constants.names.MODEL_CONTAINER, ServerStorage)
-  end
-
   local function isAPrefab(instance)
     return typeof(instance) == "Instance"
       and instance:IsA("Model")
@@ -43,27 +35,38 @@ return function(plugin)
     assert(prefab.PrimaryPart, constants.errors.MUST_HAVE_PRIMARY_PART:format(name))
   end
 
-  local function getPrefabs(parent)
-    local found = {}
-    for _, descendant in pairs(parent:GetDescendants()) do
-      if isAPrefab(descendant) then
-        table.insert(found, descendant)
+  local function getPrefabTagPattern()
+    return "^" .. globalSettings:Get(TAG_PREFIX)
+  end
+
+  local function getPrefabTags()
+    local tagList = ServerStorage:FindFirstChild("TagList")
+    local prefabTags = {}
+
+    if tagList then
+      for _, tag in pairs(tagList:GetChildren()) do
+        local tagName = tag.Name
+        if tagName:match(getPrefabTagPattern()) then
+          table.insert(prefabTags, tagName)
+        end
       end
     end
+
+    return prefabTags
+  end
+
+  local function getPrefabs()
+    local found = {}
+
+    for _, tag in pairs(getPrefabTags()) do
+      for _, prefab in pairs(CollectionService:GetTagged(tag)) do
+        if isAPrefab(prefab) then
+          table.insert(found, prefab)
+        end
+      end
+    end
+
     return found
-  end
-
-  local function getClonedPrefabs()
-    return getPrefabs(workspace)
-  end
-
-  local function getSourcePrefabs()
-    local storage = getOrCreateStorage()
-    return getPrefabs(storage)
-  end
-
-  local function getAllPrefabs()
-    return helpers.append(getSourcePrefabs(), getClonedPrefabs())
   end
 
   -- Finds the first prefab that is an ancestor of the given instance.
@@ -72,7 +75,8 @@ return function(plugin)
   -- to update the prefab they're working on. Prior to this you had to select
   -- the model to update, which breaks your flow.
   local function getAncestorPrefab(instance)
-    for _, prefab in pairs(getAllPrefabs()) do
+    local all = getPrefabs()
+    for _, prefab in pairs(all) do
       if prefab:IsAncestorOf(instance) then
         return prefab
       end
@@ -86,9 +90,8 @@ return function(plugin)
   -- Each prefab can only have one of these tags. Having more than one "prefab"
   -- tag will only result in the first being picked up.
   local function getPrefabTag(prefab)
-    local prefabTagPattern = "^" .. globalSettings:Get(TAG_PREFIX)
     for _, tag in pairs(CollectionService:GetTags(prefab)) do
-      if tag:match(prefabTagPattern) then
+      if tag:match(getPrefabTagPattern()) then
         return tag
       end
     end
@@ -96,16 +99,6 @@ return function(plugin)
 
   local function getTagForName(name)
     return globalSettings:Get(TAG_PREFIX) .. ":" .. name
-  end
-
-  local function getSourcePrefab(prefab)
-    local tag = getPrefabTag(prefab)
-
-    for _, otherPrefab in pairs(getSourcePrefabs()) do
-      if CollectionService:HasTag(otherPrefab, tag) then
-        return otherPrefab
-      end
-    end
   end
 
   local function stripExistingTag(prefab)
@@ -116,7 +109,7 @@ return function(plugin)
   end
 
   local function validateNameAvailable(name)
-    for _, prefab in pairs(getSourcePrefabs()) do
+    for _, prefab in pairs(getPrefabs()) do
       assert(name ~= prefab.Name, constants.errors.NAME_ALREADY_EXISTS:format(name))
     end
   end
@@ -137,34 +130,30 @@ return function(plugin)
   end
 
   -- Sets the parent of a cloned in prefab.
-  local function setCloneParent(clone)
+  local function setPrefabParent(newPrefab)
     local selection = SelectionService:Get()[1]
     if selection then
-      clone.Parent = selection.Parent
+      newPrefab.Parent = selection.Parent
     else
-      clone.Parent = workspace
+      newPrefab.Parent = workspace
     end
   end
 
-  -- Replaces a cloned in prefab with an updated version of the prefab
-  local function updateClone(clone, newModel)
-    local newClone = newModel:Clone()
+  -- Replaces a prefab with an updated version of itself
+  local function updatePrefab(oldPrefab, newPrefab)
+    local newCopy = newPrefab:Clone()
 
-    applySettings(newClone)
+    applySettings(newCopy)
 
-    newClone:SetPrimaryPartCFrame(clone.PrimaryPart.CFrame)
-    newClone.Parent = clone.Parent
+    newCopy:SetPrimaryPartCFrame(oldPrefab.PrimaryPart.CFrame)
+    newCopy.Parent = oldPrefab.Parent
 
-    clone.Parent = nil
+    oldPrefab.Parent = nil
   end
 
   local function getPrefabByName(name)
     local tag = getTagForName(name)
-    for _, prefab in pairs(getSourcePrefabs()) do
-      if CollectionService:HasTag(prefab, tag) then
-        return prefab
-      end
-    end
+    return CollectionService:GetTagged(tag)[1]
   end
 
   function exports.register(model)
@@ -176,10 +165,6 @@ return function(plugin)
 
     tagging.registerWithTagEditor(tag)
     CollectionService:AddTag(model, tag)
-
-    local clone = model:Clone()
-    clone.Name = model.Name
-    clone.Parent = getOrCreateStorage()
 
     applySettings(model)
 
@@ -211,15 +196,15 @@ return function(plugin)
 
     assert(prefab, constants.errors.PREFAB_NOT_FOUND:format(name))
 
-    local clone = prefab:Clone()
+    local newPrefab = prefab:Clone()
 
-    applySettings(clone)
-    setCloneParent(clone)
-    clone:MoveTo(helpers.getCameraLookat())
+    applySettings(newPrefab)
+    setPrefabParent(newPrefab)
+    newPrefab:MoveTo(helpers.getCameraLookat())
 
-    SelectionService:Set({ clone })
+    SelectionService:Set({ newPrefab })
     HistoryService:SetWaypoint(constants.waypoints.INSERTED)
-    print("Successfully inserted", clone)
+    print("Successfully inserted", newPrefab)
   end
 
   function exports.update(prefab)
@@ -234,9 +219,9 @@ return function(plugin)
 
     assert(tag, constants.errors.NO_PREFAB_TAG:format(prefab.Name))
 
-    for _, otherPrefab in pairs(CollectionService:GetTagged(tag)) do
-      if prefab ~= otherPrefab then
-        updateClone(otherPrefab, prefab)
+    for _, oldPrefab in pairs(CollectionService:GetTagged(tag)) do
+      if prefab ~= oldPrefab then
+        updatePrefab(oldPrefab, prefab)
       end
     end
 
@@ -252,7 +237,7 @@ return function(plugin)
 
     local tag = getPrefabTag(prefab)
 
-    for _, otherPrefab in pairs(getAllPrefabs()) do
+    for _, otherPrefab in pairs(getPrefabs()) do
       if CollectionService:HasTag(otherPrefab, tag) then
         CollectionService:RemoveTag(otherPrefab, tag)
       end
@@ -269,7 +254,7 @@ return function(plugin)
 
     local tag = getPrefabTag(prefab)
 
-    for _, otherPrefab in pairs(getAllPrefabs()) do
+    for _, otherPrefab in pairs(getPrefabs()) do
       if CollectionService:HasTag(otherPrefab, tag) then
         otherPrefab.Parent = nil
       end

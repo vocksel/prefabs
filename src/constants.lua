@@ -1,7 +1,6 @@
 return {
 	names = {
 		TOOLBAR = "Prefabs",
-    MODEL_CONTAINER = "Prefabs"
 	},
 
 	settings = {
@@ -23,7 +22,6 @@ return {
   },
 
   errors = {
-    NO_PREFABS_YET = "No prefabs exist currently, register a prefab first and try again.",
     MUST_BE_MODEL = "For %s to be a prefab it must be a Model instance",
     MUST_HAVE_PRIMARY_PART = "%s needs a PrimaryPart to be a prefab",
     NO_PREFAB_TAG = "%s is missing a prefab tag",
