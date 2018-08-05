@@ -248,17 +248,6 @@ return function(plugin)
 
   exports.updateWithSelection = helpers.withSelection(exports.update)
 
-  -- DEPRECATED Use `update` instead to update prefabs of the same type, instead
-  -- of every single prefab in the game
-  function exports.refresh()
-    for _, clone in pairs(getClonedPrefabs()) do
-      local source = getSourcePrefab(clone)
-      updateClone(clone, source)
-    end
-
-    HistoryService:SetWaypoint(constants.waypoints.REFRESHED)
-  end
-
   function exports.clean(prefab)
     local tag = getPrefabTag(prefab)
 
