@@ -20,8 +20,6 @@ function exports.replaceTag(model, oldTag, newTag)
   end
 end
 
--- TODO Add support for removing tags from the editor
--- When no other prefab tags are present it should also remove the tag group
 function exports.registerWithTagEditor(tag)
   helpers.mkdir(ServerStorage, constants.tagging.TAG_GROUP_FOLDER_NAME, constants.tagging.TAG_GROUP_NAME)
 
