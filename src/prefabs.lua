@@ -259,16 +259,16 @@ return function(plugin)
     HistoryService:SetWaypoint(constants.waypoints.REFRESHED)
   end
 
-  function exports.delete(prefab)
+  function exports.clean(prefab)
     local tag = getPrefabTag(prefab)
 
-    for _, otherPrefab in pairs(getSourcePrefabs()) do
+    for _, otherPrefab in pairs(getAllPrefabs()) do
       if CollectionService:HasTag(otherPrefab, tag) then
-        otherPrefab.Parent = nil
+        CollectionService:RemoveTag(otherPrefab, tag)
       end
     end
 
-    HistoryService:SetWaypoint(constants.waypoints.DELETED)
+    HistoryService:SetWaypoint(constants.waypoints.CLEAN)
   end
 
   exports.deleteSelection = helpers.withSelection(exports.delete)
