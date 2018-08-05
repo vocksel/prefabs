@@ -191,6 +191,8 @@ return function(plugin)
   exports.registerSelection = helpers.withSelection(exports.register)
 
   function exports.rename(prefab)
+    validatePrefab(prefab)
+
     local tag = getPrefabTag(prefab)
     local newTag = getTagForName(prefab.Name)
 
@@ -246,6 +248,8 @@ return function(plugin)
   exports.updateWithSelection = helpers.withSelection(exports.update)
 
   function exports.clean(prefab)
+    validatePrefab(prefab)
+
     local tag = getPrefabTag(prefab)
 
     for _, otherPrefab in pairs(getAllPrefabs()) do
@@ -261,6 +265,8 @@ return function(plugin)
   exports.cleanSelection = helpers.withSelection(exports.clean)
 
   function exports.dangerouslyDelete(prefab)
+    validatePrefab(prefab)
+
     local tag = getPrefabTag(prefab)
 
     for _, otherPrefab in pairs(getAllPrefabs()) do
