@@ -37,7 +37,26 @@ function exports.clean(tag)
       if tagFolder then
         tagFolder:Destroy()
       end
+
+      if #mainTagFolder:GetChildren() == 0 then
+        mainTagFolder:Destroy()
+      end
     end
   end
+
+  -- Additional clean up of TagEditor folders
+  local tagGroupList = ServerStorage:FindFirstChild(constants.tagging.TAG_GROUP_FOLDER_NAME)
+  if tagGroupList then
+    local prefabGroup = tagGroupList:FindFirstChild(constants.tagging.TAG_GROUP_NAME)
+    if prefabGroup then
+      if #prefabGroup:GetChildren() == 0 then
+        prefabGroup:Destroy()
+      end
+    end
+  end
+  if #tagGroupList:GetChildren() == 0 then
+    tagGroupList:Destroy()
+  end
 end
+
 return exports
