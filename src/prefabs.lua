@@ -190,9 +190,6 @@ return function(plugin)
 
   exports.registerSelection = helpers.withSelection(exports.register)
 
-  -- Updates the prefab's name across all other copies, taking care of changing
-  -- the internal tag as well.
-  -- TODO Add tag editor support. Replacing the tag won't clean up the old one
   function exports.rename(prefab)
     local tag = getPrefabTag(prefab)
     local newTag = getTagForName(prefab.Name)
