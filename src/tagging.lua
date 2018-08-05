@@ -13,6 +13,11 @@ local exports = {}
 function exports.replaceTag(model, oldTag, newTag)
   CollectionService:RemoveTag(model, oldTag)
   CollectionService:AddTag(model, newTag)
+
+  local tagFolder = helpers.mkdir(ServerStorage, constants.tagging.TAG_FOLDER_NAME, oldTag)
+  if tagFolder then
+    tagFolder.Name = newTag
+  end
 end
 
 -- TODO Add support for removing tags from the editor
