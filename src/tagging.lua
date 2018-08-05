@@ -10,11 +10,19 @@ local helpers = require(script.Parent.helpers)
 
 local exports = {}
 
+local function getFolderForTag(name)
+  local root = ServerStorage:FindFirstChild(constants.tagging.TAG_FOLDER_NAME)
+  if root then
+    return root:FindFirstChild(name)
+  end
+end
+
 function exports.replaceTag(model, oldTag, newTag)
   CollectionService:RemoveTag(model, oldTag)
   CollectionService:AddTag(model, newTag)
 
-  local tagFolder = helpers.mkdir(ServerStorage, constants.tagging.TAG_FOLDER_NAME, oldTag)
+  local tagFolder = getFolderForTag(oldTag)
+
   if tagFolder then
     tagFolder.Name = newTag
   end
