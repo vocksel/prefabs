@@ -18,7 +18,7 @@ end
 -- TODO Add support for removing tags from the editor
 -- When no other prefab tags are present it should also remove the tag group
 function exports.registerWithTagEditor(tag)
-  helpers.mkdir(ServerStorage, "TagGroupList", constants.tagging.TAG_GROUP_NAME)
+  helpers.mkdir(ServerStorage, constants.tagging.TAG_GROUP_FOLDER_NAME, constants.tagging.TAG_GROUP_NAME)
 
   local tagFolder = helpers.mkdir(ServerStorage, constants.tagging.TAG_FOLDER_NAME, tag)
 
@@ -28,4 +28,16 @@ function exports.registerWithTagEditor(tag)
   group.Parent = tagFolder
 end
 
+function exports.clean(tag)
+  local existingTaggedModels = CollectionService:GetTagged(tag)
+  if #existingTaggedModels == 0 then
+    local mainTagFolder = ServerStorage:FindFirstChild(constants.tagging.TAG_FOLDER_NAME)
+    if mainTagFolder then
+      local tagFolder = mainTagFolder:FindFirstChild(tag)
+      if tagFolder then
+        tagFolder:Destroy()
+      end
+    end
+  end
+end
 return exports

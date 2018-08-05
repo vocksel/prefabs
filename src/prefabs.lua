@@ -269,6 +269,7 @@ return function(plugin)
     end
 
     HistoryService:SetWaypoint(constants.waypoints.CLEAN)
+    tagging.clean(tag)
   end
 
   exports.deleteSelection = helpers.withSelection(exports.delete)
