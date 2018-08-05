@@ -258,7 +258,7 @@ return function(plugin)
     tagging.clean(tag)
   end
 
-  exports.deleteSelection = helpers.withSelection(exports.delete)
+  exports.cleanSelection = helpers.withSelection(exports.clean)
 
   function exports.dangerouslyDelete(prefab)
     local tag = getPrefabTag(prefab)
