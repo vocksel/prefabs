@@ -40,7 +40,7 @@ return {
     INSERTED = "Inserted prefab",
     UPDATED = "Updated prefab",
     REFRESHED = "Refreshed prefabs",
-    DELETED = "Deleted prefab",
+    CLEAN = "Clean prefab tag",
     DANGEROUSLY_DELETED = "Deleted prefab clones"
   }
 }
