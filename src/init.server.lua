@@ -8,7 +8,7 @@ local actions = {
     id = "prefabs/register",
     name = "Register",
     tooltip = "Registers the selection as a prefab",
-    icon = "rbxassetid://413367266",
+    icon = "rbxassetid://2190752357",
     callback = prefabs.registerSelection
   },
 
@@ -16,7 +16,7 @@ local actions = {
     id = "prefabs/update",
     name = "Update",
     tooltip = "With a prefab selected, update all others of the same type to match",
-    icon = "", -- TODO Get an icon
+    icon = "rbxassetid://2190753318",
     callback = prefabs.updateWithSelection
   },
 
