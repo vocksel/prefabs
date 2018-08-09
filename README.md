@@ -4,7 +4,7 @@ This plugin allows you to make reuseable models that you can update and have you
 
 The plugin gives you a few buttons to play around with, which are:
 
-## Register
+## Add
 
 This is your gateway to prefabs. Once you create a model you like, you register it to have the plugin take control.
 
@@ -12,7 +12,7 @@ The only requirements are:
 - The model has a PrimaryPart
 - The model is named something unique
 
-With the model selected click the "Register" button. From here you can simply copy/paste the model around as you would normally. The real magic happens with the next button:
+With the model selected click the "Add" button. From here you can simply copy/paste the model around as you would normally. The real magic happens with the next button:
 
 ## Update
 

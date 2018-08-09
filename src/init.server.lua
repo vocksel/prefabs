@@ -5,8 +5,8 @@ local toolbar = plugin:CreateToolbar(constants.names.TOOLBAR)
 
 local actions = {
   {
-    id = "prefabs/register",
-    name = "Register",
+    id = "prefabs/add",
+    name = "Add",
     tooltip = "Registers the selection as a prefab",
     icon = "rbxassetid://2190752357",
     callback = prefabs.registerSelection
