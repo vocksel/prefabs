@@ -21,6 +21,12 @@ return {
     TAG_GROUP_NAME = "Prefabs"
   },
 
+  messages = {
+    SUCCESSFULLY_ADDED = "Successfully registered %s",
+    SUCCESSFULLY_UPDATED = "Successfully updated all copies of %s",
+    SUCCESSFULLY_INSERTED = "Successfully inserted %s"
+  },
+
   errors = {
     MUST_BE_MODEL = "For %s to be a prefab it must be a Model instance",
     MUST_HAVE_PRIMARY_PART = "%s needs a PrimaryPart to be a prefab",
