@@ -139,6 +139,16 @@ return function(plugin)
     end
   end
 
+  local function renamePrefab(prefab)
+    local tag = getPrefabTag(prefab)
+    local newTag = getTagForName(prefab.Name)
+
+    for _, model in pairs(CollectionService:GetTagged(tag)) do
+      model.Name = prefab.Name
+      tagging.replaceTag(model, tag, newTag)
+    end
+  end
+
   -- Replaces a prefab with an updated version of itself
   local function updatePrefab(oldPrefab, newPrefab)
     local newCopy = newPrefab:Clone()
@@ -175,22 +185,6 @@ return function(plugin)
 
   exports.registerSelection = helpers.withSelection(exports.register)
 
-  function exports.rename(prefab)
-    validatePrefab(prefab)
-
-    local tag = getPrefabTag(prefab)
-    local newTag = getTagForName(prefab.Name)
-
-    for _, model in pairs(CollectionService:GetTagged(tag)) do
-      model.Name = prefab.Name
-      tagging.replaceTag(model, tag, newTag)
-    end
-
-    print("Successfully renamed", prefab)
-  end
-
-  exports.renameSelection = helpers.withSelection(exports.rename)
-
   function exports.insert(name)
     local prefab = getPrefabByName(name)
 
@@ -224,6 +218,8 @@ return function(plugin)
         updatePrefab(oldPrefab, prefab)
       end
     end
+
+    renamePrefab(prefab)
 
     HistoryService:SetWaypoint(constants.waypoints.UPDATED)
 

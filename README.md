@@ -23,9 +23,3 @@ You'll no doubt want to change a prefab eventually. To do this you edit it like 
 This will take the changes you've made and replicate them to all other prefabs of the same type.
 
 You can also do this while a _descendant_ of the prefab is selected. You aren't required to select the model itself each time you want to update your prefab.
-
-## Rename
-
-You'll sometimes find yourself wanting to rename a set of prefabs. To do this you just rename the model like normal, and with it selected press "Rename".
-
-This will rename all other prefabs of the same type, as well as updating their internal tag that the plugin uses.

@@ -18,15 +18,7 @@ local actions = {
     tooltip = "With a prefab selected, update all others of the same type to match",
     icon = "rbxassetid://2190753318",
     callback = prefabs.updateWithSelection
-  },
-
-  {
-    id = "prefabs/rename",
-    name = "Rename",
-    tooltip = "With a prefab selected, updates the name and tag for all other copies to match",
-    icon = "", -- TODO Get an icon
-    callback = prefabs.renameSelection
-  },
+  }
 }
 
 for _, info in pairs(actions) do
