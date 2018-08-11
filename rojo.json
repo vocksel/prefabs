@@ -5,6 +5,11 @@
     "src": {
       "path": "src",
       "target": "ServerStorage.Plugins.Prefabs"
+    },
+
+    "roact": {
+      "path": "modules/roact/lib",
+      "target": "ServerStorage.Plugins.Prefabs.lib.Roact"
     }
   }
 }
