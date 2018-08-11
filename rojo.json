@@ -10,6 +10,11 @@
     "roact": {
       "path": "modules/roact/lib",
       "target": "ServerStorage.Plugins.Prefabs.lib.Roact"
+    },
+
+    "rodux": {
+      "path": "modules/rodux/lib",
+      "target": "ServerStorage.Plugins.Prefabs.lib.Rodux"
     }
   }
 }
