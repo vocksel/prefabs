@@ -33,9 +33,9 @@ local function wrapErrorsWithToast(callback)
     local success, result = pcall(callback)
 
     if success then
-      store:dispatch(addToastWithTimeout(3, result))
+      store:dispatch(addToastWithTimeout(constants.toasts.TIMEOUT, result))
     else
-      store:dispatch(addToastWithTimeout(3, result))
+      store:dispatch(addToastWithTimeout(constants.toasts.TIMEOUT, result))
     end
   end
 end

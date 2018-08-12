@@ -11,7 +11,7 @@ return {
   },
 
   toasts = {
-    UPTIME = 4
+    TIMEOUT = 4
   },
 
   ui = {
