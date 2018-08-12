@@ -11,7 +11,6 @@ return createReducer({}, {
   [addToast.name] = function(state, action)
     return immutable.append(state, {
       id = action.id,
-      title = action.title,
       body = action.body
     })
   end,
