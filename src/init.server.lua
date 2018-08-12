@@ -36,15 +36,18 @@ local function wrapErrorsWithToast(callback)
 end
 
 for _, info in pairs(actions) do
-  local button = toolbar:CreateButton(info.name, info.tooltip, info.icon)
-  button.Click:Connect(wrapErrorsWithToast(info.callback))
-
   -- The buttons are scoped under the toolbar, but the actions don't have that
   -- benefit. Prepending "Prefabs" makes them easily searchable.
   local actionName = "Prefabs: " .. info.name
 
+  local button = toolbar:CreateButton(info.name, info.tooltip, info.icon)
   local action = plugin:CreatePluginAction(info.id, actionName, info.tooltip)
-  action.Triggered:Connect(wrapErrorsWithToast(info.callback))
+
+  local events = { button.Click, action.Triggered }
+
+  for _, event in pairs(events) do
+    event:Connect(wrapErrorsWithToast(info.callback))
+  end
 end
 
 -- Expose the prefab API to _G for easy command line access.
