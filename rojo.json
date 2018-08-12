@@ -20,6 +20,11 @@
     "roact-rodux": {
       "path": "modules/roact-rodux/lib",
       "target": "ServerStorage.Plugins.Prefabs.lib.RoactRodux"
+    },
+
+    "prop-types": {
+      "path": "modules/rbx-prop-types/src",
+      "target": "ServerStorage.Plugins.Prefabs.lib.PropTypes"
     }
   }
 }
