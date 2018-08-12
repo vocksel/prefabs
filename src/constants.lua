@@ -10,6 +10,18 @@ return {
     TAG_PREFIX = "TAG_PREFIX"
   },
 
+  toasts = {
+    UPTIME = 4
+  },
+
+  ui = {
+    font = Enum.Font.SourceSans,
+    textSize = 18,
+    textColor = Color3.fromRGB(255, 255, 255),
+    backgroundColor = Color3.fromRGB(20, 20, 20),
+    padding = 16
+  },
+
   -- All of this is related to tagging the prefabs and connecting with the Tag
   -- Editor plugin.
   tagging = {

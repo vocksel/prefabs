@@ -1,7 +1,12 @@
+local CoreGui = game:GetService("CoreGui")
+
+local Roact = require(script.lib.Roact)
+
 local constants = require(script.constants)
 local prefabs = require(script.prefabs)(plugin)
 local store = require(script.store)
 local addToastWithTimeout = require(script.toasts.actions.addToastWithTimeout)
+local App = require(script.components.App)
 
 local toolbar = plugin:CreateToolbar(constants.names.TOOLBAR)
 
@@ -49,6 +54,8 @@ for _, info in pairs(actions) do
     event:Connect(wrapErrorsWithToast(info.callback))
   end
 end
+
+Roact.mount(Roact.createElement(App), CoreGui, "PrefabsUI")
 
 -- Expose the prefab API to _G for easy command line access.
 _G.prefabs = prefabs
