@@ -10,6 +10,7 @@ function Toast:render()
     Size = UDim2.new(1, 0, 1, 0),
     LayoutOrder = self.props.layoutOrder,
     BackgroundColor3 = constants.ui.backgroundColor,
+    BackgroundTransparency = 0.2,
     BorderSizePixel = 0,
   }, {
     Roact.createElement("UIPadding", {
