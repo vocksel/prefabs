@@ -28,15 +28,21 @@ local actions = {
   }
 }
 
+local function sanitizeErrorMessage(message)
+  -- Matches everything after the traceback at the start.
+  -- `Prefabs.prefabs:113: A prefab named "Model" already exists. Please rename and try again`
+  return message:match(".+:%d+:(.+)")
+end
+
 local function wrapErrorsWithToast(callback)
   return function()
     local success, result = pcall(callback)
 
-    if success then
-      store:dispatch(addToastWithTimeout(constants.toasts.TIMEOUT, result))
-    else
-      store:dispatch(addToastWithTimeout(constants.toasts.TIMEOUT, result))
+    if not success then
+      result = sanitizeErrorMessage(result)
     end
+
+    store:dispatch(addToastWithTimeout(constants.toasts.TIMEOUT, result))
   end
 end
 
