@@ -180,7 +180,7 @@ return function(plugin)
 
     HistoryService:SetWaypoint(constants.waypoints.REGISTERED)
 
-    print(constants.messages.SUCCESSFULLY_ADDED:format(tostring(model)))
+    return constants.messages.SUCCESSFULLY_ADDED:format(tostring(model))
   end
 
   exports.registerSelection = helpers.withSelection(exports.register)
@@ -198,7 +198,8 @@ return function(plugin)
 
     SelectionService:Set({ newPrefab })
     HistoryService:SetWaypoint(constants.waypoints.INSERTED)
-    print(constants.messages.SUCCESSFULLY_INSERTED:format(tostring(newPrefab)))
+
+    return constants.messages.SUCCESSFULLY_INSERTED:format(tostring(newPrefab))
   end
 
   function exports.update(prefab)
@@ -223,7 +224,7 @@ return function(plugin)
 
     HistoryService:SetWaypoint(constants.waypoints.UPDATED)
 
-    print(constants.messages.SUCCESSFULLY_UPDATED:format(tostring(prefab)))
+    return constants.messages.SUCCESSFULLY_UPDATED:format(tostring(prefab))
   end
 
   exports.updateWithSelection = helpers.withSelection(exports.update)
