@@ -31,7 +31,7 @@ local actions = {
 local function sanitizeErrorMessage(message)
   -- Matches everything after the traceback at the start.
   -- `Prefabs.prefabs:113: A prefab named "Model" already exists. Please rename and try again`
-  return message:match(".+:%d+:(.+)")
+  return message:match(".+:%d+: (.+)")
 end
 
 local function wrapErrorsWithToast(callback)
