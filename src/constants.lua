@@ -15,8 +15,8 @@ return {
   },
 
   sounds = {
-    click = "rbxasset://click.ogg",
-    notification = "rbxasset://intuition.ogg"
+    click = "rbxassetid://2210083553",
+    notification = "rbxassetid://2210084100"
   },
 
   ui = {
