@@ -4,9 +4,8 @@ local Roact = require(script.lib.Roact)
 
 local constants = require(script.constants)
 local prefabs = require(script.prefabs)(plugin)
-local store = require(script.store)
-local addToastWithTimeout = require(script.toasts.actions.addToastWithTimeout)
 local App = require(script.components.App)
+local toastOnError = require(script.toasts.toastOnError)
 
 local toolbar = plugin:CreateToolbar(constants.names.TOOLBAR)
 
@@ -28,24 +27,6 @@ local actions = {
   }
 }
 
-local function sanitizeErrorMessage(message)
-  -- Matches everything after the traceback at the start.
-  -- `Prefabs.prefabs:113: A prefab named "Model" already exists. Please rename and try again`
-  return message:match(".+:%d+: (.+)")
-end
-
-local function wrapErrorsWithToast(callback)
-  return function()
-    local success, result = pcall(callback)
-
-    if not success then
-      result = sanitizeErrorMessage(result)
-    end
-
-    store:dispatch(addToastWithTimeout(constants.toasts.TIMEOUT, result))
-  end
-end
-
 for _, info in pairs(actions) do
   -- The buttons are scoped under the toolbar, but the actions don't have that
   -- benefit. Prepending "Prefabs" makes them easily searchable.
@@ -57,7 +38,7 @@ for _, info in pairs(actions) do
   local events = { button.Click, action.Triggered }
 
   for _, event in pairs(events) do
-    event:Connect(wrapErrorsWithToast(info.callback))
+    event:Connect(toastOnError(info.callback))
   end
 end
 
