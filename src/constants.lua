@@ -14,6 +14,11 @@ return {
     TIMEOUT = 4
   },
 
+  sounds = {
+    click = "rbxasset://click.ogg",
+    notification = "rbxasset://intuition.ogg"
+  },
+
   ui = {
     font = Enum.Font.SourceSans,
     textSize = 18,

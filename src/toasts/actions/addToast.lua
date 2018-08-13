@@ -8,6 +8,9 @@ return action(script.Name, function(id, body)
 
   return {
     id = id,
-    body = body
+    body = body,
+    meta = {
+      soundId = "rbxasset://intuition.ogg"
+    }
   }
 end)

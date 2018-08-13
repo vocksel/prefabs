@@ -3,6 +3,7 @@
 --]]
 
 local SelectionService = game:GetService("Selection")
+local SoundService = game:GetService("SoundService")
 
 local constants = require(script.Parent.constants)
 
@@ -94,6 +95,12 @@ function exports.withSelection(callback)
 
     return callback(selection)
   end
+end
+
+function exports.playLocalSound(soundId)
+  local sound = Instance.new("Sound")
+  sound.SoundId = soundId
+  SoundService:PlayLocalSound(sound)
 end
 
 return exports
