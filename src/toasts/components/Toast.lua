@@ -2,8 +2,10 @@ local root = script.Parent.Parent.Parent
 
 local PropTypes = require(root.lib.PropTypes)
 local Roact = require(root.lib.Roact)
+local connect = require(root.lib.RoactRodux).UNSTABLE_connect2
 local constants = require(root.constants)
 local TopBar = require(script.Parent.TopBar)
+local setHoveredToast = require(script.Parent.Parent.actions.setHoveredToast)
 
 local Toast = Roact.PureComponent:extend("Toast")
 
@@ -15,6 +17,8 @@ local validate = PropTypes.object({
 })
 
 function Toast:render()
+  local toast = self.props.toast
+
   assert(validate(self.props))
 
   return Roact.createElement("Frame", {
@@ -23,6 +27,18 @@ function Toast:render()
     BackgroundColor3 = constants.ui.backgroundColor,
     BackgroundTransparency = 0.2,
     BorderSizePixel = 0,
+
+    [Roact.Event.InputBegan] = function(_, input)
+      if input.UserInputType == Enum.UserInputType.MouseMovement then
+        self.props.onMouseEnter(toast.id)
+      end
+    end,
+
+    [Roact.Event.InputEnded] = function(_, input)
+      if input.UserInputType == Enum.UserInputType.MouseMovement then
+        self.props.onMouseLeave()
+      end
+    end
   }, {
     Padding = Roact.createElement("UIPadding", {
       PaddingTop = UDim.new(0, constants.ui.padding),
@@ -36,7 +52,7 @@ function Toast:render()
     }),
 
     TopBar = Roact.createElement(TopBar, {
-      toast = self.props.toast
+      toast = toast
     }),
 
     Body = Roact.createElement("TextLabel", {
@@ -44,7 +60,7 @@ function Toast:render()
       BackgroundTransparency = 1,
       Font = constants.ui.font,
       TextSize = constants.ui.textSize,
-      Text = self.props.toast.body,
+      Text = toast.body,
       TextWrapped = true,
       TextColor3 = constants.ui.textColor,
       TextXAlignment = Enum.TextXAlignment.Left,
@@ -53,4 +69,15 @@ function Toast:render()
   })
 end
 
-return Toast
+local function mapDispatchToProps(dispatch)
+  return {
+    onMouseEnter = function(id)
+      dispatch(setHoveredToast(id))
+    end,
+    onMouseLeave = function()
+      dispatch(setHoveredToast(nil))
+    end
+  }
+end
+
+return connect(nil, mapDispatchToProps)(Toast)
