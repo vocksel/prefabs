@@ -1,6 +1,6 @@
 local root = script.Parent.Parent.Parent
 
-local action = require(root.action)
+local action = require(root.helpers.action)
 local constants = require(root.constants)
 
 return action(script.Name, function(id, body)

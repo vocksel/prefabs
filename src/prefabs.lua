@@ -6,8 +6,9 @@ return function(plugin)
 
   local constants = require(script.Parent.constants)
   local PluginSettings = require(script.Parent.PluginSettings)(plugin)
-  local helpers = require(script.Parent.helpers)
   local tagging = require(script.Parent.tagging)
+  local withSelection = require(script.Parent.helpers.withSelection)
+  local getCameraLookat = require(script.Parent.helpers.getCameraLookat)
   -- local scale = require(script.scale)
 
   local globalSettings = PluginSettings.new("global")
@@ -183,7 +184,7 @@ return function(plugin)
     return constants.messages.SUCCESSFULLY_ADDED:format(tostring(model))
   end
 
-  exports.registerSelection = helpers.withSelection(exports.register)
+  exports.registerSelection = withSelection(exports.register)
 
   function exports.insert(name)
     local prefab = getPrefabByName(name)
@@ -194,7 +195,7 @@ return function(plugin)
 
     applySettings(newPrefab)
     setPrefabParent(newPrefab)
-    newPrefab:MoveTo(helpers.getCameraLookat())
+    newPrefab:MoveTo(getCameraLookat())
 
     SelectionService:Set({ newPrefab })
     HistoryService:SetWaypoint(constants.waypoints.INSERTED)
@@ -227,7 +228,7 @@ return function(plugin)
     return constants.messages.SUCCESSFULLY_UPDATED:format(tostring(prefab))
   end
 
-  exports.updateWithSelection = helpers.withSelection(exports.update)
+  exports.updateWithSelection = withSelection(exports.update)
 
   function exports.clean(prefab)
     validatePrefab(prefab)
@@ -244,7 +245,7 @@ return function(plugin)
     tagging.clean(tag)
   end
 
-  exports.cleanSelection = helpers.withSelection(exports.clean)
+  exports.cleanSelection = withSelection(exports.clean)
 
   function exports.dangerouslyDelete(prefab)
     validatePrefab(prefab)
@@ -260,7 +261,7 @@ return function(plugin)
     HistoryService:SetWaypoint(constants.waypoints.DANGEROUSLY_DELETED)
   end
 
-  exports.dangerouslyDeleteSelection = helpers.withSelection(exports.dangerouslyDelete)
+  exports.dangerouslyDeleteSelection = withSelection(exports.dangerouslyDelete)
 
   return exports
 end

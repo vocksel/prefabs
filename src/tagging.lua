@@ -6,7 +6,7 @@ local CollectionService = game:GetService("CollectionService")
 local ServerStorage = game:GetService("ServerStorage")
 
 local constants = require(script.Parent.constants)
-local helpers = require(script.Parent.helpers)
+local mkdir = require(script.Parent.helpers.mkdir)
 
 local exports = {}
 
@@ -29,9 +29,9 @@ function exports.replaceTag(model, oldTag, newTag)
 end
 
 function exports.registerWithTagEditor(tag)
-  helpers.mkdir(ServerStorage, constants.tagging.TAG_GROUP_FOLDER_NAME, constants.tagging.TAG_GROUP_NAME)
+  mkdir(ServerStorage, constants.tagging.TAG_GROUP_FOLDER_NAME, constants.tagging.TAG_GROUP_NAME)
 
-  local tagFolder = helpers.mkdir(ServerStorage, constants.tagging.TAG_FOLDER_NAME, tag)
+  local tagFolder = mkdir(ServerStorage, constants.tagging.TAG_FOLDER_NAME, tag)
 
   local group = Instance.new("StringValue")
   group.Name = "Group"

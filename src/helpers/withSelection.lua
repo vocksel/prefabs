@@ -7,7 +7,7 @@
 
 local SelectionService = game:GetService("Selection")
 
-local constants = require(script.Parent.Parent.constnts)
+local constants = require(script.Parent.Parent.constants)
 
 local function withSelection(callback)
   return function()
