@@ -109,9 +109,12 @@ return function(plugin)
     end
   end
 
-  local function validateNameAvailable(name)
-    for _, prefab in pairs(getPrefabs()) do
-      assert(name ~= prefab.Name, constants.errors.NAME_ALREADY_EXISTS:format(name))
+  local function validateNameAvailable(prefab)
+    local name = prefab.Name
+    for _, otherPrefab in pairs(getPrefabs()) do
+      if prefab ~= otherPrefab then
+        assert(name ~= otherPrefab.Name, constants.errors.NAME_ALREADY_EXISTS:format(name))
+      end
     end
   end
 
@@ -169,7 +172,7 @@ return function(plugin)
 
   function exports.register(model)
     validatePrefab(model)
-    validateNameAvailable(model.Name)
+    validateNameAvailable(model)
     stripExistingTag(model)
 
     local tag = getTagForName(model.Name)
