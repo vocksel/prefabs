@@ -34,11 +34,11 @@ return function(plugin)
 	end
 
 	function PluginSettings:Get(key)
-		return plugin:GetSetting(self:_formatKey(key)) or DEFAULT_SETTINGS[key]
+		return plugin:getSetting(self:_formatKey(key)) or DEFAULT_SETTINGS[key]
 	end
 
 	function PluginSettings:Set(key, value)
-		plugin:SetSetting(self:_formatKey(key), value)
+		plugin:setSetting(self:_formatKey(key), value)
 	end
 
 	return PluginSettings
