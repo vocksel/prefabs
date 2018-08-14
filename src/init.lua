@@ -1,6 +1,4 @@
 return function(plugin, initialState)
-  print("loaded")
-
   local CoreGui = game:GetService("CoreGui")
 
   local Roact = require(script.Parent.lib.Roact)
