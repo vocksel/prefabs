@@ -4,27 +4,37 @@
   "partitions": {
     "src": {
       "path": "src",
-      "target": "ServerStorage.Plugins.Prefabs"
+      "target": "ServerStorage.Prefabs.src"
     },
 
     "roact": {
       "path": "modules/roact/lib",
-      "target": "ServerStorage.Plugins.Prefabs.lib.Roact"
+      "target": "ServerStorage.Prefabs.lib.Roact"
     },
 
     "rodux": {
       "path": "modules/rodux/lib",
-      "target": "ServerStorage.Plugins.Prefabs.lib.Rodux"
+      "target": "ServerStorage.Prefabs.lib.Rodux"
     },
 
     "roact-rodux": {
       "path": "modules/roact-rodux/lib",
-      "target": "ServerStorage.Plugins.Prefabs.lib.RoactRodux"
+      "target": "ServerStorage.Prefabs.lib.RoactRodux"
     },
 
     "prop-types": {
       "path": "modules/rbx-prop-types/src",
-      "target": "ServerStorage.Plugins.Prefabs.lib.PropTypes"
+      "target": "ServerStorage.Prefabs.lib.PropTypes"
+    },
+
+    "functional": {
+      "path": "modules/functional.lua",
+      "target": "ServerStorage.Prefabs.lib.functional"
+    },
+
+    "immutable": {
+      "path": "modules/immutable.lua",
+      "target": "ServerStorage.Prefabs.lib.immutable"
     }
   }
 }

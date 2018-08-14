@@ -1,7 +1,7 @@
-local root = script.Parent.Parent.Parent
+local src = script.Parent.Parent.Parent
 
-local action = require(root.helpers.action)
-local constants = require(root.constants)
+local action = require(src.helpers.action)
+local constants = require(src.constants)
 
 return action(script.Name, function(id, body)
   assert(id)

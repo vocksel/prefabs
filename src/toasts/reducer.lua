@@ -1,4 +1,4 @@
-local root = script.Parent.Parent
+local root = script.Parent.Parent.Parent
 
 local createReducer = require(root.lib.Rodux).createReducer
 local functional = require(root.lib.functional)

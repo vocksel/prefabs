@@ -1,7 +1,7 @@
-local root = script.Parent.Parent.Parent
+local root = script.Parent.Parent.Parent.Parent
 
 local Roact = require(root.lib.Roact)
-local constants = require(root.constants)
+local constants = require(root.src.constants)
 local ToastCloseButton = require(script.Parent.ToastCloseButton)
 
 local TopBar = Roact.PureComponent:extend("TopBar")

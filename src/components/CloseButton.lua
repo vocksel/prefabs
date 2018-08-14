@@ -1,9 +1,10 @@
-local root = script.Parent.Parent
+local src = script.Parent.Parent
+local root = src.Parent
 
 local PropTypes = require(root.lib.PropTypes)
 local Roact = require(root.lib.Roact)
-local constants = require(root.constants)
-local playLocalSound = require(root.helpers.playLocalSound)
+local constants = require(src.constants)
+local playLocalSound = require(src.helpers.playLocalSound)
 
 local CloseButton = Roact.PureComponent:extend("CloseButton")
 

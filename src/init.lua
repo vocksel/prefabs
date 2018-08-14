@@ -3,7 +3,7 @@ return function(plugin, initialState)
 
   local CoreGui = game:GetService("CoreGui")
 
-  local Roact = require(script.lib.Roact)
+  local Roact = require(script.Parent.lib.Roact)
 
   local constants = require(script.constants)
   local prefabs = require(script.prefabs)(plugin)

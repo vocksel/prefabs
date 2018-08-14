@@ -3,7 +3,7 @@ if not plugin then
 	return
 end
 
-local SOURCE_FOLDER = "Prefabs"
+local SOURCE_FOLDER = "src"
 
 -- currentRoot will not be the same as source
 local source = script.Parent.Parent

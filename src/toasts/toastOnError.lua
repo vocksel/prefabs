@@ -5,10 +5,10 @@
   Wraps a callback and automatically displays toasts if it error.
 --]]
 
-local root = script.Parent.Parent
+local src = script.Parent.Parent
 
-local constants = require(root.constants)
-local store = require(root.store)
+local constants = require(src.constants)
+local store = require(src.store)
 local addToastWithTimeout = require(script.Parent.actions.addToastWithTimeout)
 
 local function sanitizeErrorMessage(message)

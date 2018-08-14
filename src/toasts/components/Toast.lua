@@ -1,9 +1,9 @@
-local root = script.Parent.Parent.Parent
+local root = script.Parent.Parent.Parent.Parent
 
 local PropTypes = require(root.lib.PropTypes)
 local Roact = require(root.lib.Roact)
 local connect = require(root.lib.RoactRodux).UNSTABLE_connect2
-local constants = require(root.constants)
+local constants = require(root.src.constants)
 local TopBar = require(script.Parent.TopBar)
 local setHoveredToast = require(script.Parent.Parent.actions.setHoveredToast)
 
