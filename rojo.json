@@ -35,6 +35,11 @@
     "immutable": {
       "path": "modules/immutable.lua",
       "target": "ServerStorage.Prefabs.lib.immutable"
+    },
+
+    "maid": {
+      "path": "modules/Maid.lua",
+      "target": "ServerStorage.Prefabs.lib.Maid"
     }
   }
 }
