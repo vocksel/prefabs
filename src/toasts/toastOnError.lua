@@ -8,7 +8,6 @@
 local src = script.Parent.Parent
 
 local constants = require(src.constants)
-local store = require(src.store)
 local addToastWithTimeout = require(script.Parent.actions.addToastWithTimeout)
 
 local function sanitizeErrorMessage(message)
@@ -17,7 +16,7 @@ local function sanitizeErrorMessage(message)
   return message:match(".+:%d+: (.+)")
 end
 
-local function toastOnError(callback)
+local function toastOnError(store, callback)
   return function()
     local success, result = pcall(callback)
 
