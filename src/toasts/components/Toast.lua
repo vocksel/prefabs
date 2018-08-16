@@ -1,9 +1,12 @@
-local root = script.Parent.Parent.Parent.Parent
+local src = script.Parent.Parent.Parent
+local root = src.Parent
 
 local PropTypes = require(root.lib.PropTypes)
 local Roact = require(root.lib.Roact)
 local connect = require(root.lib.RoactRodux).UNSTABLE_connect2
-local constants = require(root.src.constants)
+local constants = require(src.constants)
+local SizeProvider = require(src.components.SizeProvider)
+local TextLabel = require(src.components.TextLabel)
 local TopBar = require(script.Parent.TopBar)
 local setHoveredToast = require(script.Parent.Parent.actions.setHoveredToast)
 
@@ -21,51 +24,64 @@ function Toast:render()
 
   assert(validate(self.props))
 
-  return Roact.createElement("Frame", {
-    Size = UDim2.new(1, 0, 1, 0),
-    LayoutOrder = self.props.layoutOrder,
-    BackgroundColor3 = constants.ui.backgroundColor,
-    BackgroundTransparency = 0.2,
-    BorderSizePixel = 0,
+  return Roact.createElement(SizeProvider, {
+    layout = Roact.createElement("UIListLayout", {
+      SortOrder = Enum.SortOrder.LayoutOrder,
+      -- [Roact.Ref] = function(rbx)
+      --   if not rbx then return end
 
-    [Roact.Event.InputBegan] = function(_, input)
-      if input.UserInputType == Enum.UserInputType.MouseMovement then
-        self.props.onMouseEnter(toast.id)
-      end
-    end,
+      --   local function update()
+      --     if rbx.Parent then
+      --       local size = rbx.Parent.Size
+      --       rbx.Parent.Size = UDim2.new(, 400, 0, rbx.AbsoluteContentSize.y+(constants.ui.padding*2))
+      --     end
+      --   end
 
-    [Roact.Event.InputEnded] = function(_, input)
-      if input.UserInputType == Enum.UserInputType.MouseMovement then
-        self.props.onMouseLeave()
-      end
+      --   rbx:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update)
+      --   update()
+      -- end
+    }),
+    render = function(layout, height)
+      return Roact.createElement("Frame", {
+        -- Padding the height to offset the top and bottom UIPadding
+        Size = UDim2.new(1, 0, 0, height+(constants.ui.padding*2)),
+
+        LayoutOrder = self.props.layoutOrder,
+        BackgroundColor3 = constants.ui.backgroundColor,
+        BackgroundTransparency = 0.2,
+        BorderSizePixel = 0,
+
+        [Roact.Event.InputBegan] = function(_, input)
+          if input.UserInputType == Enum.UserInputType.MouseMovement then
+            self.props.onMouseEnter(toast.id)
+          end
+        end,
+
+        [Roact.Event.InputEnded] = function(_, input)
+          if input.UserInputType == Enum.UserInputType.MouseMovement then
+            self.props.onMouseLeave()
+          end
+        end
+      }, {
+        Layout = layout,
+
+        Padding = Roact.createElement("UIPadding", {
+          PaddingTop = UDim.new(0, constants.ui.padding),
+          PaddingRight = UDim.new(0, constants.ui.padding),
+          PaddingBottom = UDim.new(0, constants.ui.padding),
+          PaddingLeft = UDim.new(0, constants.ui.padding),
+        }),
+
+        TopBar = Roact.createElement(TopBar, {
+          toast = toast
+        }),
+
+        Body = Roact.createElement(TextLabel, {
+          Text = toast.body,
+          TextWrapped = true
+        })
+      })
     end
-  }, {
-    Padding = Roact.createElement("UIPadding", {
-      PaddingTop = UDim.new(0, constants.ui.padding),
-      PaddingRight = UDim.new(0, constants.ui.padding),
-      PaddingBottom = UDim.new(0, constants.ui.padding),
-      PaddingLeft = UDim.new(0, constants.ui.padding),
-    }),
-
-    Layout = Roact.createElement("UIListLayout", {
-      SortOrder = Enum.SortOrder.LayoutOrder
-    }),
-
-    TopBar = Roact.createElement(TopBar, {
-      toast = toast
-    }),
-
-    Body = Roact.createElement("TextLabel", {
-      Size = UDim2.new(1, 0, 1, 0),
-      BackgroundTransparency = 1,
-      Font = constants.ui.font,
-      TextSize = constants.ui.textSize,
-      Text = toast.body,
-      TextWrapped = true,
-      TextColor3 = constants.ui.textColor,
-      TextXAlignment = Enum.TextXAlignment.Left,
-      TextYAlignment = Enum.TextYAlignment.Top,
-    })
   })
 end
 

@@ -26,7 +26,7 @@ function ToastList:render()
   end
 
   return Roact.createElement("Frame", {
-    Size = UDim2.new(0, 400, 0, constants.ui.textSize*2+constants.ui.padding*2),
+    Size = UDim2.new(0, 400, 0, 0),
     Position = UDim2.new(1, -constants.ui.padding, 1, -constants.ui.padding),
     AnchorPoint = Vector2.new(1, 1),
     BackgroundTransparency = 1
