@@ -51,13 +51,10 @@ return function(plugin, initialState)
       local button = plugin:button(toolbar, info.name, info.tooltip, info.icon)
       local action = plugin:action(info.id, actionName, info.tooltip)
 
-      local events = {
-        buttonClick = button.Click,
-        actionTriggered = action.Triggered
-      }
+      local events = { button.Click, action.Triggered }
 
-      for name, event in pairs(events) do
-        maid[name] = event:Connect(toastOnError(store, info.callback))
+      for _, event in pairs(events) do
+        maid[event] = event:Connect(toastOnError(store, info.callback))
       end
     end
   end
