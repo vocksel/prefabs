@@ -21,7 +21,7 @@ function ToastList:render()
   for index, toast in ipairs(self.props.toasts) do
     children[toast.id] = Roact.createElement(Toast, {
       toast = toast,
-      layoutOrder = -index
+      layoutOrder = index
     })
   end
 
