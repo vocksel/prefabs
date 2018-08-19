@@ -233,22 +233,18 @@ return function(plugin)
 
   exports.updateWithSelection = withSelection(exports.update)
 
-  function exports.clean(prefab)
+  function exports.unlink(prefab)
     validatePrefab(prefab)
 
     local tag = getPrefabTag(prefab)
 
-    for _, otherPrefab in pairs(getPrefabs()) do
-      if CollectionService:HasTag(otherPrefab, tag) then
-        CollectionService:RemoveTag(otherPrefab, tag)
-      end
-    end
+    CollectionService:RemoveTag(prefab, tag)
+    tagging.clean(tag)
 
     HistoryService:SetWaypoint(constants.waypoints.CLEAN)
-    tagging.clean(tag)
   end
 
-  exports.cleanSelection = withSelection(exports.clean)
+  exports.unlinkSelection = withSelection(exports.unlink)
 
   function exports.dangerouslyDelete(prefab)
     validatePrefab(prefab)
