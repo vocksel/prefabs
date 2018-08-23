@@ -302,7 +302,7 @@ return function(plugin)
       end
     end)
 
-    -- exports._connections:give(conn)
+    exports._connections:give(conn)
   end
 
   return exports
