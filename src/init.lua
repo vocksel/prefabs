@@ -40,6 +40,14 @@ return function(plugin, initialState)
         tooltip = "With a prefab selected, update all others of the same type to match",
         icon = "rbxassetid://2256271848",
         callback = prefabs.updateWithSelection
+      },
+
+      {
+        id = "prefabs/unlink",
+        name = "Unlink",
+        tooltip = "Unlinks a model from being considered a prefab",
+        icon = "rbxassetid://2256271578",
+        callback = prefabs.unlinkSelection
       }
     }
 

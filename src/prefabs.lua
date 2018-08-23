@@ -267,6 +267,8 @@ return function(plugin)
     tagging.clean(tag)
 
     HistoryService:SetWaypoint(constants.waypoints.CLEAN)
+
+    return constants.messages.SUCCESSFULLY_UNLINKED:format(tostring(prefab))
   end
 
   exports.unlinkSelection = withSelection(exports.unlink)

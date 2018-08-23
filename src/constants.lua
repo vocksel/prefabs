@@ -41,7 +41,8 @@ return {
   messages = {
     SUCCESSFULLY_ADDED = "Successfully registered %s",
     SUCCESSFULLY_UPDATED = "Successfully updated all copies of %s",
-    SUCCESSFULLY_INSERTED = "Successfully inserted %s"
+    SUCCESSFULLY_INSERTED = "Successfully inserted %s",
+    SUCCESSFULLY_UNLINKED = "Successfully unlinked %s"
   },
 
   errors = {
