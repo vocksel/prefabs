@@ -30,7 +30,7 @@ return function(plugin, initialState)
         id = "prefabs/add",
         name = "Add",
         tooltip = "Registers the selection as a prefab",
-        icon = "rbxassetid://2190752357",
+        icon = "rbxassetid://2256271239",
         callback = prefabs.registerSelection
       },
 
@@ -38,7 +38,7 @@ return function(plugin, initialState)
         id = "prefabs/update",
         name = "Update",
         tooltip = "With a prefab selected, update all others of the same type to match",
-        icon = "rbxassetid://2190753318",
+        icon = "rbxassetid://2256271848",
         callback = prefabs.updateWithSelection
       }
     }
