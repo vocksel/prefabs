@@ -40,6 +40,11 @@
     "maid": {
       "path": "modules/Maid.lua",
       "target": "ServerStorage.Prefabs.lib.Maid"
+    },
+
+    "signal": {
+      "path": "modules/Signal.lua",
+      "target": "ServerStorage.Prefabs.lib.Signal"
     }
   }
 }

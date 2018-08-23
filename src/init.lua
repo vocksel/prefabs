@@ -69,9 +69,13 @@ return function(plugin, initialState)
     instance = Roact.mount(element, CoreGui, "PrefabsUI")
   end
 
+  prefabs.listenForLastPrefabRemoval()
+  prefabs.cleanOnRemoval()
+
   plugin:beforeUnload(function()
     Roact.unmount(instance)
     maid:clean()
+    prefabs._connections:clean()
     return store:getState()
   end)
 

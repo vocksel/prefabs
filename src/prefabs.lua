@@ -4,11 +4,15 @@ return function(plugin)
   local SelectionService = game:GetService("Selection")
   local ServerStorage = game:GetService("ServerStorage")
 
+  local root = script.Parent.Parent
+
   local constants = require(script.Parent.constants)
   local PluginSettings = require(script.Parent.PluginSettings)(plugin)
   local tagging = require(script.Parent.tagging)
   local withSelection = require(script.Parent.helpers.withSelection)
   local getCameraLookat = require(script.Parent.helpers.getCameraLookat)
+  local Maid = require(root.lib.Maid)
+  local Signal = require(root.lib.Signal)
   -- local scale = require(script.scale)
 
   local globalSettings = PluginSettings.new("global")
@@ -17,7 +21,11 @@ return function(plugin)
   local TAG_PREFIX = constants.settings.TAG_PREFIX
   local PREVENT_COLLISIONS = constants.settings.PREVENT_COLLISIONS
 
-  local exports = {}
+  local lastPrefabRemoved = Signal.new()
+
+  local exports = {
+    _connections = Maid.new()
+  }
 
   local function isAPrefab(instance)
     return typeof(instance) == "Instance"
@@ -170,6 +178,22 @@ return function(plugin)
     return CollectionService:GetTagged(tag)[1]
   end
 
+  -- Listens for the last prefab with the given tag to be removed.
+  --
+  -- When this happens, the _lastPrefabRemoved event is fired. This allows us to
+  -- clean things up when the last prefab of a certain type is removed from the game.
+  local function listenForLastRemoval(tag)
+    local maid = exports._connections
+
+    if not maid[tag] then
+      maid[tag] = CollectionService:GetInstanceRemovedSignal(tag):Connect(function()
+        if #CollectionService:GetTagged(tag) == 0 then
+          lastPrefabRemoved:Fire(tag)
+        end
+      end)
+    end
+  end
+
   function exports.register(model)
     validatePrefab(model)
     validateNameAvailable(model)
@@ -181,6 +205,7 @@ return function(plugin)
     CollectionService:AddTag(model, tag)
 
     applySettings(model)
+    listenForLastRemoval(tag)
 
     HistoryService:SetWaypoint(constants.waypoints.REGISTERED)
 
@@ -261,6 +286,24 @@ return function(plugin)
   end
 
   exports.dangerouslyDeleteSelection = withSelection(exports.dangerouslyDelete)
+
+  function exports.listenForLastPrefabRemoval()
+    for _, tag in pairs(getPrefabTags()) do
+      listenForLastRemoval(tag)
+    end
+  end
+
+  function exports.cleanOnRemoval()
+    local conn = lastPrefabRemoved:Connect(function(tag)
+      local tagList = ServerStorage:FindFirstChild("TagList")
+
+      if tagList then
+        tagList:FindFirstChild(tag).Parent = nil
+      end
+    end)
+
+    -- exports._connections:give(conn)
+  end
 
   return exports
 end
