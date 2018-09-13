@@ -127,13 +127,16 @@ return function(plugin)
   end
 
   local function applySettings(prefab)
-    if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
-      prefab.PrimaryPart.Transparency = 1
-    end
-
-    if globalSettings:Get(PREVENT_COLLISIONS) then
-      prefab.PrimaryPart.CanCollide = false
-    end
+    -- TODO These settings need to be made opt-in. See here for more info:
+    -- https://github.com/vocksel/prefabs/issues/50
+    --
+    -- if globalSettings:Get(MAKE_PRIMARY_PART_INVISIBLE) then
+    --   prefab.PrimaryPart.Transparency = 1
+    -- end
+    --
+    -- if globalSettings:Get(PREVENT_COLLISIONS) then
+    --   prefab.PrimaryPart.CanCollide = false
+    -- end
 
     -- TODO Add back support for scaling models
     -- if placeholder:FindFirstChild("Scale") and placeholder.Scale:IsA("NumberValue") then
