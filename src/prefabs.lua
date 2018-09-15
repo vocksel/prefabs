@@ -303,7 +303,13 @@ return function(plugin)
       local tagList = ServerStorage:FindFirstChild("TagList")
 
       if tagList then
-        tagList:FindFirstChild(tag).Parent = nil
+        local tagFolder = tagList:FindFirstChild(tag)
+
+        -- The tag folder will not exist if the last prefab was renamed, in
+        -- which case we're reusing the tag folder to just give it a new name.
+        if tagFolder then
+          tagFolder.Parent = nil
+        end
       end
     end)
 

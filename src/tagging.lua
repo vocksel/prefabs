@@ -18,14 +18,20 @@ local function getFolderForTag(name)
 end
 
 function exports.replaceTag(model, oldTag, newTag)
-  CollectionService:RemoveTag(model, oldTag)
-  CollectionService:AddTag(model, newTag)
-
   local tagFolder = getFolderForTag(oldTag)
 
+  -- The tag folder must be renamed /before/ calling RemoveTag.
+  --
+  -- We listen for the last type of prefab being removed elsewhere in the plugin
+  -- to clean up things left behind. Renaming also triggers this if you only
+  -- have one copy of a prefab and rename it, so we need to make sure the tag
+  -- folder has a different name before the event tries to purge it.
   if tagFolder then
     tagFolder.Name = newTag
   end
+
+  CollectionService:RemoveTag(model, oldTag)
+  CollectionService:AddTag(model, newTag)
 end
 
 function exports.registerWithTagEditor(tag)
