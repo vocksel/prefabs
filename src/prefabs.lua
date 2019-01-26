@@ -164,11 +164,36 @@ return function(plugin)
     end
   end
 
+  -- Cleans out any prefab-specific objects that shouldn't be present in a new
+  -- copy of the prefab.
+  local function cleanPrefab(newCopy)
+    local config = newCopy:FindFirstChildOfClass("Configuration")
+
+    if config then
+      config.Parent = nil
+    end
+  end
+
+  -- Copies the Configuration instance from one prefab to the new one. This
+  -- allows each prefab to have its own properties.
+  local function copyConfig(oldPrefab, newCopy)
+    local config = oldPrefab:FindFirstChildOfClass("Configuration")
+
+    if config then
+      local copy = config:Clone()
+      copy.Parent = newCopy
+    end
+  end
+
   -- Replaces a prefab with an updated version of itself
   local function updatePrefab(oldPrefab, newPrefab)
     local newCopy = newPrefab:Clone()
 
+    -- If oldPrefab has a config, copy it to newCopy
+
     applySettings(newCopy)
+    cleanPrefab(newCopy)
+    copyConfig(oldPrefab, newCopy)
 
     newCopy:SetPrimaryPartCFrame(oldPrefab.PrimaryPart.CFrame)
     newCopy.Parent = oldPrefab.Parent
