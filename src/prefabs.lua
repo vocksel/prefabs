@@ -189,8 +189,6 @@ return function(plugin)
   local function updatePrefab(oldPrefab, newPrefab)
     local newCopy = newPrefab:Clone()
 
-    -- If oldPrefab has a config, copy it to newCopy
-
     applySettings(newCopy)
     cleanPrefab(newCopy)
     copyConfig(oldPrefab, newCopy)
@@ -264,6 +262,8 @@ return function(plugin)
       prefab = getAncestorPrefab(prefab)
       assert(prefab, constants.errors.COULD_NOT_FIND_PREFAB_FROM_SELECTION:format(tostring(prefab)))
     end
+
+    print(prefab)
 
     validatePrefab(prefab)
 
