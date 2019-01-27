@@ -24,24 +24,11 @@ function Toast:render()
 
   assert(validate(self.props))
 
+  local layoutRef = Roact.createRef()
+
   return Roact.createElement(SizeProvider, {
-    layout = Roact.createElement("UIListLayout", {
-      SortOrder = Enum.SortOrder.LayoutOrder,
-      -- [Roact.Ref] = function(rbx)
-      --   if not rbx then return end
-
-      --   local function update()
-      --     if rbx.Parent then
-      --       local size = rbx.Parent.Size
-      --       rbx.Parent.Size = UDim2.new(, 400, 0, rbx.AbsoluteContentSize.y+(constants.ui.padding*2))
-      --     end
-      --   end
-
-      --   rbx:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update)
-      --   update()
-      -- end
-    }),
-    render = function(layout, height)
+    layoutRef = layoutRef,
+    render = function(height)
       return Roact.createElement("Frame", {
         -- Padding the height to offset the top and bottom UIPadding
         Size = UDim2.new(1, 0, 0, height+(constants.ui.padding*2)),
@@ -63,7 +50,10 @@ function Toast:render()
           end
         end
       }, {
-        Layout = layout,
+        Layout = Roact.createElement("UIListLayout", {
+          SortOrder = Enum.SortOrder.LayoutOrder,
+          [Roact.Ref] = layoutRef
+        }),
 
         Padding = Roact.createElement("UIPadding", {
           PaddingTop = UDim.new(0, constants.ui.padding),

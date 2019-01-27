@@ -4,16 +4,18 @@
 
   Usage:
 
-  Roact.createElement(SizeProvider, {
-    layout = Roact.createElement("UIListLayout"),
+  local layoutRef = Roact.createRef()
 
-    -- `layout` is the UIListLayout element.
-    -- `height` is the height of the content.
-    render = function(layout, height)
+  Roact.createElement(SizeProvider, {
+    layoutRef = layoutRef,
+    render = function(height)
       return Roact.createElement("Frame", {
         Size = UDim2.new(1, 0, 0, height)
       }, {
-        layout = layout,
+        layout = Roact.createElement("UIListLayout", {
+          SortOrder = Enum.SortOrder.LayoutOrder,
+          [Roact.Ref] = layoutRef
+        }),
 
         text = Roact.createElement("TextLabel", {
           Size = UDim2.new(1, 0, 0, 16)
@@ -27,7 +29,7 @@ local root = script.Parent.Parent.Parent
 
 local Roact = require(root.lib.Roact)
 
-local SizeProvider = Roact.PureComponent:extend("SizeProvider")
+local SizeProvider = Roact.Component:extend("SizeProvider")
 
 function SizeProvider:init()
   self.state = {
@@ -36,15 +38,15 @@ function SizeProvider:init()
 end
 
 function SizeProvider:render()
-  self.props.layout.props[Roact.Ref] = function(rbx)
-    if not rbx then return end
+  return self.props.render(self.state.height)
+end
 
-    self.heightConn = rbx:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-      self:setState({ height = rbx.AbsoluteContentSize.Y })
-    end)
-  end
+function SizeProvider:didMount()
+  local layout = self.props.layoutRef.current
 
-  return self.props.render(self.props.layout, self.state.height)
+  self.heightConn = layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    self:setState({ height = layout.AbsoluteContentSize.Y })
+  end)
 end
 
 function SizeProvider:willUnmount()
