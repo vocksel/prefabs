@@ -45,11 +45,16 @@ function SizeProvider:didMount()
   local layout = self.props.layoutRef.current
 
   self.heightConn = layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-    self:setState({ height = layout.AbsoluteContentSize.Y })
+    spawn(function()
+      if not self.isUnmounted then
+        self:setState({ height = layout.AbsoluteContentSize.Y })
+      end
+    end)
   end)
 end
 
 function SizeProvider:willUnmount()
+  self.isUnmounted = true
   self.heightConn:Disconnect()
 end
 
