@@ -1,0 +1,48 @@
+{
+	"name": "prefabs",
+	"tree": {
+    "$className": "DataModel",
+    "HttpService": {
+      "$className": "HttpService",
+      "$properties": {
+        "HttpEnabled": true
+      }
+    },
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Prefabs": {
+        "$className": "Folder",
+        "src": {
+          "$path": "src/"
+        },
+        "lib": {
+          "$className": "Folder",
+          "Roact": {
+						"$path": "modules/roact/lib"
+					},
+					"Rodux": {
+						"$path": "modules/rodux/lib"
+					},
+					"RoactRodux": {
+						"$path": "modules/roact-rodux/lib"
+					},
+					"PropTypes": {
+						"$path": "modules/rbx-prop-types/src"
+					},
+					"functional": {
+						"$path": "modules/functional.lua"
+					},
+					"immutable": {
+						"$path": "modules/immutable.lua"
+					},
+					"Maid": {
+						"$path": "modules/Maid.lua"
+					},
+					"Signal": {
+						"$path": "modules/Signal.lua"
+					}
+        }
+			}
+    }
+	}
+}
