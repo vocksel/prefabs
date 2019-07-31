@@ -1,0 +1,3 @@
+[submodule "lib/TestEZ"]
+	path = lib/TestEZ
+	url = https://github.com/Roblox/TestEZ

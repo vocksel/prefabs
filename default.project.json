@@ -18,16 +18,16 @@
         "lib": {
           "$className": "Folder",
           "Roact": {
-						"$path": "modules/roact/lib"
+						"$path": "modules/Roact/src"
 					},
 					"Rodux": {
-						"$path": "modules/rodux/lib"
+						"$path": "modules/Rodux/lib"
 					},
 					"RoactRodux": {
-						"$path": "modules/roact-rodux/lib"
+						"$path": "modules/RoactRodux/lib"
 					},
 					"PropTypes": {
-						"$path": "modules/rbx-prop-types/src"
+						"$path": "modules/PropTypes/src"
 					},
 					"functional": {
 						"$path": "modules/functional.lua"

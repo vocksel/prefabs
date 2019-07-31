@@ -1,0 +1,30 @@
+site_name: 'rbx-prop-types documentation'
+site_description: 'Documentation for rbx-prop-types'
+site_url: 'https://proptypes.amaranthinecodices.me/'
+
+repo_name: 'AmaranthineCodices/rbx-prop-types'
+repo_url: 'https://github.com/AmaranthineCodices/rbx-prop-types'
+
+pages:
+  - Home: 'index.md'
+  - 'API Reference': 'api.md'
+
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/AmaranthineCodices/'
+    - type: 'twitter'
+      link: 'https://twitter.com/prolificlexicon'
+
+theme:
+  name: 'material'
+  logo:
+    icon: 'description'
+  palette:
+    primary: 'deep purple'
+    accent: 'cyan'
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
