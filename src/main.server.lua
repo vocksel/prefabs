@@ -1,16 +1,16 @@
 local CoreGui = game:GetService("CoreGui")
 
-local Roact = require(script.lib.Roact)
-local Rodux = require(script.lib.Rodux)
-local StoreProvider = require(script.lib.RoactRodux).StoreProvider
-local Maid = require(script.lib.Maid)
+local Roact = require(script.Parent.lib.Roact)
+local Rodux = require(script.Parent.lib.Rodux)
+local StoreProvider = require(script.Parent.lib.RoactRodux).StoreProvider
+local Maid = require(script.Parent.lib.Maid)
 
-local constants = require(script.constants)
-local prefabs = require(script.prefabs)(plugin)
-local App = require(script.components.App)
-local toastOnError = require(script.toasts.toastOnError)
-local reducer = require(script.reducer)
-local soundsMiddleware = require(script.middleware.soundsMiddleware)
+local constants = require(script.Parent.constants)
+local prefabs = require(script.Parent.prefabs)(plugin)
+local App = require(script.Parent.components.App)
+local toastOnError = require(script.Parent.toasts.toastOnError)
+local reducer = require(script.Parent.reducer)
+local soundsMiddleware = require(script.Parent.middleware.soundsMiddleware)
 
 local maid = Maid.new()
 
