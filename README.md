@@ -23,3 +23,16 @@ You'll no doubt want to change a prefab eventually. To do this you edit it like 
 This will take the changes you've made and replicate them to all other prefabs of the same type.
 
 You can also do this while a _descendant_ of the prefab is selected. You aren't required to select the model itself each time you want to update your prefab.
+
+## Development
+
+Install [Hotswap](https://www.roblox.com/library/184216383/HotSwap-v1-1) and [Rojo](https://github.com/rojo-rbx/rojo/)
+
+```
+rojo build -o prefabs.rbxlx
+rojo serve
+```
+
+- Open the place and start up Rojo
+- Start up Hotswap and point it to `ReplicatedStorage.Prefabs`
+- Run the game
