@@ -1,6 +1,6 @@
 local root = script.Parent.Parent.Parent
 
-local PropTypes = require(root.lib.PropTypes)
+local t = require(root.lib.t)
 local Roact = require(root.lib.Roact)
 local connect = require(root.lib.RoactRodux).UNSTABLE_connect2
 local constants = require(root.constants)
@@ -11,17 +11,17 @@ local setHoveredToast = require(script.Parent.Parent.actions.setHoveredToast)
 
 local Toast = Roact.PureComponent:extend("Toast")
 
-local validate = PropTypes.object({
-    toast = PropTypes.object({
-        body = PropTypes.string
+local Props = t.interface({
+    toast = t.interface({
+        body = t.string
     }),
-    layoutOrder = PropTypes.number
+    layoutOrder = t.number
 })
 
 function Toast:render()
     local toast = self.props.toast
 
-    assert(validate(self.props))
+    assert(Props(self.props))
 
     local layoutRef = Roact.createRef()
 

@@ -1,17 +1,17 @@
-local PropTypes = require(script.Parent.Parent.lib.PropTypes)
+local t = require(script.Parent.Parent.lib.t)
 local Roact = require(script.Parent.Parent.lib.Roact)
 local constants = require(script.Parent.Parent.constants)
 local playLocalSound = require(script.Parent.Parent.helpers.playLocalSound)
 
 local CloseButton = Roact.PureComponent:extend("CloseButton")
 
-local validate = PropTypes.object({
-    color = PropTypes.optional(PropTypes.Color3),
-    onClick = PropTypes.callback
+local Props = t.interface({
+    color = t.optional(t.Color3),
+    onClick = t.callback
 })
 
 function CloseButton:render()
-    assert(validate(self.props))
+    assert(Props(self.props))
 
     return Roact.createElement("ImageButton", {
         Image = "rbxassetid://1432074468",
