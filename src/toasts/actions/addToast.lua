@@ -1,17 +1,21 @@
 local root = script.Parent.Parent.Parent
 
-local action = require(root.helpers.action)
+local t = require(root.lib.t)
 local constants = require(root.constants)
 
-return action(script.Name, function(id, body)
-    assert(id)
-    assert(type(body) == "string")
+local check = t.tuple(t.string, t.string)
+
+local function addToast(id, body)
+    assert(check(id, body))
 
     return {
+        type = "ADD_TOAST",
         id = id,
         body = body,
         meta = {
             soundId = constants.sounds.notification
         }
     }
-end)
+end
+
+return addToast

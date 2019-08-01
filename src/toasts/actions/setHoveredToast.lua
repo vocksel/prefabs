@@ -1,7 +1,16 @@
 local root = script.Parent.Parent.Parent
 
-local action = require(root.helpers.action)
+local t = require(root.lib.t)
 
-return action(script.Name, function(id)
-    return { id = id }
-end)
+local check = t.string
+
+local function setHoveredToast(id)
+    assert(check(id))
+
+    return {
+        type = "SET_HOVERED_TOAST",
+        id = id
+    }
+end
+
+return setHoveredToast
