@@ -5,10 +5,8 @@ local connect = require(root.lib.RoactRodux).UNSTABLE_connect2
 local constants = require(root.constants)
 local Toast = require(script.Parent.Toast)
 
-local ToastList = Roact.PureComponent:extend("ToastList")
-
-function ToastList:render()
-    if not self.props.isShown then return end
+local function ToastList(props)
+    if not props.isShown then return end
 
     local children = {}
 
@@ -18,7 +16,7 @@ function ToastList:render()
         VerticalAlignment = Enum.VerticalAlignment.Bottom
     })
 
-    for index, toast in ipairs(self.props.toasts) do
+    for index, toast in ipairs(props.toasts) do
         children[toast.id] = Roact.createElement(Toast, {
             toast = toast,
             layoutOrder = index

@@ -9,8 +9,6 @@ local TextLabel = require(root.components.TextLabel)
 local TopBar = require(script.Parent.TopBar)
 local setHoveredToast = require(script.Parent.Parent.actions.setHoveredToast)
 
-local Toast = Roact.PureComponent:extend("Toast")
-
 local Props = t.interface({
     toast = t.interface({
         body = t.string
@@ -18,10 +16,8 @@ local Props = t.interface({
     layoutOrder = t.number
 })
 
-function Toast:render()
-    local toast = self.props.toast
-
-    assert(Props(self.props))
+local function Toast(props)
+    assert(Props(props))
 
     local layoutRef = Roact.createRef()
 
@@ -32,20 +28,20 @@ function Toast:render()
                 -- Padding the height to offset the top and bottom UIPadding
                 Size = UDim2.new(1, 0, 0, height+(constants.ui.padding*2)),
 
-                LayoutOrder = self.props.layoutOrder,
+                LayoutOrder = props.layoutOrder,
                 BackgroundColor3 = constants.ui.backgroundColor,
                 BackgroundTransparency = 0.2,
                 BorderSizePixel = 0,
 
                 [Roact.Event.InputBegan] = function(_, input)
                     if input.UserInputType == Enum.UserInputType.MouseMovement then
-                        self.props.onMouseEnter(toast.id)
+                        props.onMouseEnter(props.toast.id)
                     end
                 end,
 
                 [Roact.Event.InputEnded] = function(_, input)
                     if input.UserInputType == Enum.UserInputType.MouseMovement then
-                        self.props.onMouseLeave()
+                        props.onMouseLeave()
                     end
                 end
             }, {
@@ -62,11 +58,11 @@ function Toast:render()
                 }),
 
                 TopBar = Roact.createElement(TopBar, {
-                    toast = toast
+                    toast = props.toast
                 }),
 
                 Body = Roact.createElement(TextLabel, {
-                    Text = toast.body,
+                    Text = props.toast.body,
                     TextWrapped = true
                 })
             })

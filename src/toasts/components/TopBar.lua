@@ -4,9 +4,7 @@ local Roact = require(root.lib.Roact)
 local constants = require(root.constants)
 local ToastCloseButton = require(script.Parent.ToastCloseButton)
 
-local TopBar = Roact.PureComponent:extend("TopBar")
-
-function TopBar:render()
+local function TopBar(props)
     return Roact.createElement("Frame", {
         Size = UDim2.new(1, 0, 0, constants.ui.textSize),
         BackgroundTransparency = 1,
@@ -24,7 +22,7 @@ function TopBar:render()
         }),
 
         Close = Roact.createElement(ToastCloseButton, {
-            toast = self.props.toast,
+            toast = props.toast,
             layoutOrder = 2
         })
     })
