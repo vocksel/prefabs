@@ -2,9 +2,9 @@ local root = script.Parent.Parent.Parent
 
 local http = game:GetService("HttpService")
 
+local Cryo = require(root.lib.Cryo)
 local addToast = require(script.Parent.addToast)
 local removeToast = require(script.Parent.removeToast)
-local functional = require(root.lib.functional)
 
 return function(timeout, body)
     return function(store)
@@ -16,7 +16,7 @@ return function(timeout, body)
             wait(timeout)
 
             local state = store:getState()
-            local toast = functional.filter(state.toasts, function(toast)
+            local toast = Cryo.List.filter(state.toasts, function(toast)
                 return toast.id == id
             end)[1]
 

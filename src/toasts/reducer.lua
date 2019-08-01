@@ -1,6 +1,5 @@
 local createReducer = require(script.Parent.Parent.lib.Rodux).createReducer
-local functional = require(script.Parent.Parent.lib.functional)
-local immutable = require(script.Parent.Parent.lib.immutable)
+local Cryo = require(script.Parent.Parent.lib.Cryo)
 
 local addToast = require(script.Parent.actions.addToast)
 local removeToast = require(script.Parent.actions.removeToast)
@@ -8,7 +7,7 @@ local setHoveredToast = require(script.Parent.actions.setHoveredToast)
 
 return createReducer({}, {
     [addToast.name] = function(state, action)
-        return immutable.append(state, {
+        return Cryo.List.join(state, {
             id = action.id,
             body = action.body,
             isHovered = false
@@ -16,13 +15,14 @@ return createReducer({}, {
     end,
 
     [removeToast.name] = function(state, action)
-        return functional.filter(state, function(item)
+        return Cryo.List.filter(state, function(item)
             return item.id ~= action.id
         end)
     end,
 
     [setHoveredToast.name] = function(state, action)
-        return functional.map(state, function(item)
+        return Cryo.List.map(state, function(item)
+            -- FIXME: this is mutating
             item.isHovered = item.id == action.id
             return item
         end)

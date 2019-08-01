@@ -1,7 +1,7 @@
 local TextService = game:GetService("TextService")
 
 local Roact = require(script.Parent.Parent.lib.Roact)
-local immutable = require(script.Parent.Parent.lib.immutable)
+local Cryo = require(script.Parent.Parent.lib.Cryo)
 local constants = require(script.Parent.Parent.constants)
 
 local function TextLabel(props)
@@ -45,9 +45,7 @@ local function TextLabel(props)
         end or nil
     }
 
-    props = immutable.joinDictionaries(defaultProps, props)
-
-    return Roact.createElement("TextLabel", props)
+    return Roact.createElement("TextLabel", Cryo.Dictionary.join(defaultProps, props))
 end
 
 return TextLabel
