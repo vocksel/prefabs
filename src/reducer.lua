@@ -1,9 +1,5 @@
-local src = script.Parent
-local root = src.Parent
-
-local combineReducers = require(root.lib.Rodux.combineReducers)
-
-local toasts = require(src.toasts.reducer)
+local combineReducers = require(script.Parent.lib.Rodux.combineReducers)
+local toasts = require(script.Parent.toasts.reducer)
 
 return combineReducers({
   toasts = toasts

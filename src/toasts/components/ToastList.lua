@@ -1,8 +1,8 @@
-local root = script.Parent.Parent.Parent.Parent
+local root = script.Parent.Parent.Parent
 
 local Roact = require(root.lib.Roact)
 local connect = require(root.lib.RoactRodux).UNSTABLE_connect2
-local constants = require(root.src.constants)
+local constants = require(root.constants)
 local Toast = require(script.Parent.Toast)
 
 local ToastList = Roact.PureComponent:extend("ToastList")

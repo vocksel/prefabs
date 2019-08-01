@@ -1,9 +1,9 @@
-local root = script.Parent.Parent.Parent.Parent
+local root = script.Parent.Parent.Parent
 
 local PropTypes = require(root.lib.PropTypes)
 local Roact = require(root.lib.Roact)
 local connect = require(root.lib.RoactRodux).UNSTABLE_connect2
-local CloseButton = require(root.src.components.CloseButton)
+local CloseButton = require(root.components.CloseButton)
 local removeToast = require(script.Parent.Parent.actions.removeToast)
 
 local ToastCloseButton = Roact.PureComponent:extend("ToastCloseButton")

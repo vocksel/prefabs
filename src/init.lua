@@ -1,12 +1,10 @@
 return function(plugin, initialState)
-  local root = script.Parent
-
   local CoreGui = game:GetService("CoreGui")
 
-  local Roact = require(root.lib.Roact)
-  local Rodux = require(root.lib.Rodux)
-  local StoreProvider = require(root.lib.RoactRodux).StoreProvider
-  local Maid = require(root.lib.Maid)
+  local Roact = require(script.lib.Roact)
+  local Rodux = require(script.lib.Rodux)
+  local StoreProvider = require(script.lib.RoactRodux).StoreProvider
+  local Maid = require(script.lib.Maid)
 
   local constants = require(script.constants)
   local prefabs = require(script.prefabs)(plugin)

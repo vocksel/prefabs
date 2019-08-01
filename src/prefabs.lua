@@ -4,15 +4,13 @@ return function(plugin)
   local SelectionService = game:GetService("Selection")
   local ServerStorage = game:GetService("ServerStorage")
 
-  local root = script.Parent.Parent
-
   local constants = require(script.Parent.constants)
   local PluginSettings = require(script.Parent.PluginSettings)(plugin)
   local tagging = require(script.Parent.tagging)
   local withSelection = require(script.Parent.helpers.withSelection)
   local getCameraLookat = require(script.Parent.helpers.getCameraLookat)
-  local Maid = require(root.lib.Maid)
-  local Signal = require(root.lib.Signal)
+  local Maid = require(script.Parent.lib.Maid)
+  local Signal = require(script.Parent.lib.Signal)
   -- local scale = require(script.scale)
 
   local globalSettings = PluginSettings.new("global")

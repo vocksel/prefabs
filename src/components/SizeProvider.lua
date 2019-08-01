@@ -25,9 +25,7 @@
   })
 ]]
 
-local root = script.Parent.Parent.Parent
-
-local Roact = require(root.lib.Roact)
+local Roact = require(script.Parent.Parent.lib.Roact)
 
 local SizeProvider = Roact.Component:extend("SizeProvider")
 

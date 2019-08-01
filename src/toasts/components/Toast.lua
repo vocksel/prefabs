@@ -1,12 +1,11 @@
-local src = script.Parent.Parent.Parent
-local root = src.Parent
+local root = script.Parent.Parent.Parent
 
 local PropTypes = require(root.lib.PropTypes)
 local Roact = require(root.lib.Roact)
 local connect = require(root.lib.RoactRodux).UNSTABLE_connect2
-local constants = require(src.constants)
-local SizeProvider = require(src.components.SizeProvider)
-local TextLabel = require(src.components.TextLabel)
+local constants = require(root.constants)
+local SizeProvider = require(root.components.SizeProvider)
+local TextLabel = require(root.components.TextLabel)
 local TopBar = require(script.Parent.TopBar)
 local setHoveredToast = require(script.Parent.Parent.actions.setHoveredToast)
 

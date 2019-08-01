@@ -1,4 +1,4 @@
-local root = script.Parent.Parent.Parent.Parent
+local root = script.Parent.Parent.Parent
 
 local http = game:GetService("HttpService")
 

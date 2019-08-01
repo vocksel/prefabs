@@ -11,38 +11,14 @@
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "Prefabs": {
-        "$className": "Folder",
-        "src": {
-          "$path": "src/"
-        },
-        "lib": {
-          "$className": "Folder",
-          "Roact": {
-						"$path": "modules/Roact/src"
-					},
-					"Rodux": {
-						"$path": "modules/Rodux/lib"
-					},
-					"RoactRodux": {
-						"$path": "modules/RoactRodux/lib"
-					},
-					"PropTypes": {
-						"$path": "modules/PropTypes/src"
-					},
-					"functional": {
-						"$path": "modules/functional.lua"
-					},
-					"immutable": {
-						"$path": "modules/immutable.lua"
-					},
-					"Maid": {
-						"$path": "modules/Maid.lua"
-					},
-					"Signal": {
-						"$path": "modules/Signal.lua"
-					}
-        }
+        "$path": "src/"
 			}
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "$properties": {
+        "LoadStringEnabled": true
+      }
     }
 	}
 }

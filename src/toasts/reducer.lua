@@ -1,8 +1,6 @@
-local root = script.Parent.Parent.Parent
-
-local createReducer = require(root.lib.Rodux).createReducer
-local functional = require(root.lib.functional)
-local immutable = require(root.lib.immutable)
+local createReducer = require(script.Parent.Parent.lib.Rodux).createReducer
+local functional = require(script.Parent.Parent.lib.functional)
+local immutable = require(script.Parent.Parent.lib.immutable)
 
 local addToast = require(script.Parent.actions.addToast)
 local removeToast = require(script.Parent.actions.removeToast)

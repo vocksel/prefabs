@@ -1,11 +1,8 @@
 local TextService = game:GetService("TextService")
 
-local src = script.Parent.Parent
-local root = src.Parent
-
-local Roact = require(root.lib.Roact)
-local immutable = require(root.lib.immutable)
-local constants = require(src.constants)
+local Roact = require(script.Parent.Parent.lib.Roact)
+local immutable = require(script.Parent.Parent.lib.immutable)
+local constants = require(script.Parent.Parent.constants)
 
 local function TextLabel(props)
 	local defaultProps = {

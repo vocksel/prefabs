@@ -1,7 +1,5 @@
-local root = script.Parent.Parent.Parent
-
-local Roact = require(root.lib.Roact)
-local ToastList = require(root.src.toasts.components.ToastList)
+local Roact = require(script.Parent.Parent.lib.Roact)
+local ToastList = require(script.Parent.Parent.toasts.components.ToastList)
 
 local App = Roact.PureComponent:extend("App")
 
