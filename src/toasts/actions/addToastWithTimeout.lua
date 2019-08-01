@@ -7,26 +7,26 @@ local removeToast = require(script.Parent.removeToast)
 local functional = require(root.lib.functional)
 
 return function(timeout, body)
-  return function(store)
-    local id = http:GenerateGUID()
+    return function(store)
+        local id = http:GenerateGUID()
 
-    store:dispatch(addToast(id, body))
+        store:dispatch(addToast(id, body))
 
-    spawn(function()
-      wait(timeout)
+        spawn(function()
+            wait(timeout)
 
-      local state = store:getState()
-      local toast = functional.filter(state.toasts, function(toast)
-        return toast.id == id
-      end)[1]
+            local state = store:getState()
+            local toast = functional.filter(state.toasts, function(toast)
+                return toast.id == id
+            end)[1]
 
-      if toast then
-        if toast.isHovered then
-          repeat wait(1) until not toast.isHovered
-        end
+            if toast then
+                if toast.isHovered then
+                    repeat wait(1) until not toast.isHovered
+                end
 
-        store:dispatch(removeToast(id))
-      end
-    end)
-  end
+                store:dispatch(removeToast(id))
+            end
+        end)
+    end
 end

@@ -1,35 +1,35 @@
 --[[
-  Creates folders one after the other.
+    Creates folders one after the other.
 
-  Every argument after the first is a string for a folder name. It also reuses
-  existing folders. This is good for retroactively creating complex folder
-  structures.
+    Every argument after the first is a string for a folder name. It also reuses
+    existing folders. This is good for retroactively creating complex folder
+    structures.
 
-  Usage:
+    Usage:
 
-    mkdir(game.ServerStorage, "Foo", "Bar")
+        mkdir(game.ServerStorage, "Foo", "Bar")
 
-  The resulting hierarchy will look like:
+    The resulting hierarchy will look like:
 
-    ServerStorage
-      Foo
-        Bar
+        ServerStorage
+            Foo
+                Bar
 --]]
 
 local newFolder = require(script.Parent.newFolder)
 
 local function mkdir(root, ...)
-  assert(root, "argument #1 to mkdir missing, need an instance")
+    assert(root, "argument #1 to mkdir missing, need an instance")
 
-  local parent = root
-  local lastFolder
+    local parent = root
+    local lastFolder
 
-  for _, name in pairs{ ... } do
-    lastFolder = parent:FindFirstChild(name) or newFolder(name, parent)
-    parent = lastFolder
-  end
+    for _, name in pairs{ ... } do
+        lastFolder = parent:FindFirstChild(name) or newFolder(name, parent)
+        parent = lastFolder
+    end
 
-  return lastFolder
+    return lastFolder
 end
 
 return mkdir
