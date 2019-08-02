@@ -1,0 +1,11 @@
+name = "prefabs"
+author = "David Minnerly"
+content_root = "src"
+version = "0.1.0"
+
+[dependencies]
+Cryo = { git = "https://github.com/Roblox/cryo", rev = "roblox" }
+Roact = { git = "https://github.com/Roblox/roact", rev = "roblox" }
+RoactRodux = { git = "https://github.com/Roblox/roact-rodux", rev = "roblox" }
+Rodux = { git = "https://github.com/Roblox/rodux", rev = "roblox" }
+t = { git = "https://github.com/Roblox/t", rev = "master" }
